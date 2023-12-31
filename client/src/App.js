@@ -46,7 +46,6 @@ function App() {
     //     </div>
     //   </BrowserRouter>
     //   <p>
-    <div className="">
       <Router>
         <Navbar />
         <Routes>
@@ -63,12 +62,6 @@ function App() {
 
         {/* SO IF YOU SOMETHING TO APPEAR ON ALL PAGE, PUT OUTSIDE THE <Routes> */}
       </Router>
-      {/* <p>
-        <i>
-          <strong>Please add your links using route</strong>
-        </i>
-      </p> */}
-    </div>
   );
 }
 

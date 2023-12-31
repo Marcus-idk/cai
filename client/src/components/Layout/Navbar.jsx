@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import nyplogo from "../../assets/images/nyplogo.png";
 import styles from "../../styles/Layout/Navbar.module.css";
 import profile from "../../assets/images/profile.png";
@@ -33,6 +33,8 @@ import LogoutButton from "../Student/LogoutButton";
 // };
 
 const Navbar = () => {
+  let location = useLocation();
+
   const userRole = localStorage.getItem('userRole');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,6 +43,7 @@ const Navbar = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   
+  if (location.pathname === '/') return null;
   return (
     <nav>
       
