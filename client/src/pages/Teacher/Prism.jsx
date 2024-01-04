@@ -187,6 +187,7 @@ const Prism = () => {
   };
 
   return (
+    <div class="container">
     <div className={styles.Prism}>
       <ToolBar
         count={filteredData.length}
@@ -231,6 +232,7 @@ const Prism = () => {
       <ModifyDrawer data={editData} title="Edit" />
       <ModifyDrawer data={displayAddJob} title="Add" />
       <DeletePopup data={deleteData} />
+    </div>
     </div>
   );
 };

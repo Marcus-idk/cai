@@ -4,6 +4,7 @@ import nyplogo from "../../assets/images/nyplogo.png";
 import styles from "../../styles/Layout/Navbar.module.css";
 import profile from "../../assets/images/profile.png";
 import LogoutButton from "../Student/LogoutButton";
+import NavbarLink from "./NavbarLink.jsx";
 
 // const Navbar = () => {
 //     return (
@@ -33,8 +34,6 @@ import LogoutButton from "../Student/LogoutButton";
 // };
 
 const Navbar = () => {
-  let location = useLocation();
-
   const userRole = localStorage.getItem('userRole');
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,89 +41,43 @@ const Navbar = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  
-  if (location.pathname === '/') return null;
+
+  const path = useLocation().pathname;
+  console.log(path);
+
+  if (!userRole) return null;
   return (
-    <nav>
-      
-
-
-      {userRole === "regular" && (
-        <>
-          <ul>
-            <div className={styles["images"]}>
-            <li>
-              <img src={nyplogo} alt='Logo' />
-            </li>
-            <li>
-              <img className={styles["profile"]} src={profile} alt='profile'/>
-            </li>
-            </div>
-          </ul>
-          <ul>
-            <li>
-                <LogoutButton/>
-            </li>
-          </ul>
-        </>
-      )}
-
-      
-      {userRole === "admin" && (
-        <>
-          <ul>
-            <div className={styles["images"]}>
-            <li>
-              <img src={nyplogo} alt='Logo' />
-            </li>
-            <li>
-              <img className={styles["profile"]} src={profile} alt='profile'/>
-            </li>
-            </div>
-          </ul>
-          <div className={styles["menu-button"]} onClick={toggleMenu}>
-            ☰ {/* Hamburger icon */}
-          </div>
-          <div className={`${styles["admin-menu-wrapper"]} ${isMenuOpen ? styles["open"] : ""}`}>
-          <ul className={styles["admin-menu-bar"]}>
-          <li>
-              <Link to="/teacher/itp">ITP</Link>
-            </li>
-            <li>
-              <Link to="itpsummary">ITP Summary</Link>
-            </li> 
-            <li>
-              <Link to="prismsummary">Prism Summary</Link>
-            </li> 
-            <li>
-              <Link to="teacherlanding">Teacher's Home Page</Link>
-            </li>
-            <li>
-              <Link to="/">Logout</Link>
-            </li>
-          </ul>
-         
+    <div class="container">
+      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <div class="col-md-3 mb-2 mb-md-0">
+          <a href="#" class="d-inline-flex link-body-emphasis text-decoration-none">
+            <img src={nyplogo} alt="" height="75" />
+          </a>
         </div>
-        </>
-      )}
-     
 
-      {!userRole && (
-        <>
-          <ul>
-            <li>
-              <img src={nyplogo} alt='Logo' />
-            </li>
-            {/* <li>
-            <Link to="login">Login</Link>
-        </li> */}
-          </ul>
-        </>
-      )}
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+          {userRole === "regular" && (
+            <>
+              <NavbarLink linkPath="/studentform" currPath={path} text="Form" />
+              <NavbarLink linkPath="#" currPath={path} text="About" />
+            </>
+          )}
+          {userRole === "admin" && (
+            <>
+              <NavbarLink linkPath="/teacherlanding" currPath={path} text="Home" />
+              <NavbarLink linkPath="/teacher/itp" currPath={path} text="ITP" />
+              <NavbarLink linkPath="/teacher/itpsummary" currPath={path} text="ITP Summary" />
+              <NavbarLink linkPath="/teacher/prism" currPath={path} text="Prism" />
+              <NavbarLink linkPath="/teacher/prismsummary" currPath={path} text="Prism Summary" />
+              <NavbarLink linkPath="/teacher/viewallstudents" currPath={path} text="Students" />
+            </>
+          )}
+        </ul>
 
-    </nav>
+        <div class="col-md-3 text-end"><LogoutButton /></div>
+      </header>
+    </div>
   );
-
 };
 
 export default Navbar;

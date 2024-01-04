@@ -11,15 +11,12 @@ const LogoutButton = () => {
       console.log('User logged out');
       // You may want to redirect the user or perform other actions upon logout
       navigate("/")
+      window.location.reload(false);
     }
   
 
-return (
-    <ul>
-        <li>
-            <img className={styles.logout} src={logout} alt='Logout' onClick={handleLogout}/>
-        </li>
-    </ul>
-);
+  return (
+    <button type="button" class="btn btn-outline-primary me-2" onClick={handleLogout}>Sign Out</button>
+  );
 };
 export default LogoutButton;

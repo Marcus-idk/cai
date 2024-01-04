@@ -275,75 +275,77 @@ const Itp = () => {
   };
 
   return (
-    <div className="itp">
-      <ToolBar
-        count={filteredData.length}
-        title="Internship Job Listings"
-        placeholder="Search by Job ID, Company, Teacher, or Role..."
-        isCardView={isCardView}
-        onDisplayType={handleDisplayToggle}
-        onSearch={handleSearch}
-        onAdd={handleAddJob}
-        // onFilter={handleFilter}
-      />
-      {/* <AppBar position="static">
-        <Toolbar>
-          <Typography
-            variant="h6"
-            color="inherit"
-            component="div"
-            sx={{ flexGrow: 1 }}
-          >
-            Internship Job Listings (3)
-          </Typography>
-          <TextField
-            label="Search field"
-            type="search"
-            variant="outlined"
-            size="small"
-            sx={{ marginRight: 2 }}
-          />
-          <Button color="inherit" startIcon={<FilterIcon />}>
-            Filter
-          </Button>
-          <IconButton color="inherit">
-            <AddIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar> */}
-      {isCardView ? (
-        <div className={styles.cards}>
-          {filteredData.map((item) => (
-            <Card1
-              key={item.jobID} //Prevent suboptimal code that causes all Card1 component to rerender caused by
-              //missing unique identifier
-              onEdit={displayEditForm}
-              onDelete={displayDeletePopup}
-              id={item.jobID}
-              company={item.company}
-              teacher={item.teacher}
-              role={item.role}
-              description={item.description}
+    <div class="container">
+      <div className="itp">
+        <ToolBar
+          count={filteredData.length}
+          title="Internship Job Listings"
+          placeholder="Search by Job ID, Company, Teacher, or Role..."
+          isCardView={isCardView}
+          onDisplayType={handleDisplayToggle}
+          onSearch={handleSearch}
+          onAdd={handleAddJob}
+          // onFilter={handleFilter}
+        />
+        {/* <AppBar position="static">
+          <Toolbar>
+            <Typography
+              variant="h6"
+              color="inherit"
+              component="div"
+              sx={{ flexGrow: 1 }}
+            >
+              Internship Job Listings (3)
+            </Typography>
+            <TextField
+              label="Search field"
+              type="search"
+              variant="outlined"
+              size="small"
+              sx={{ marginRight: 2 }}
             />
-          ))}
-        </div>
-      ) : (
-        <>
-          <br />
-          <div style={{ height: dataGridHeight, width: "100%" }}>
-            <DataGrid
-              rows={filteredData}
-              columns={actionColumns.concat(columns)}
-              pageSize={5}
-              // pagination
-              // disableColumnFilter
-            />
+            <Button color="inherit" startIcon={<FilterIcon />}>
+              Filter
+            </Button>
+            <IconButton color="inherit">
+              <AddIcon />
+            </IconButton>
+          </Toolbar>
+        </AppBar> */}
+        {isCardView ? (
+          <div className={styles.cards}>
+            {filteredData.map((item) => (
+              <Card1
+                key={item.jobID} //Prevent suboptimal code that causes all Card1 component to rerender caused by
+                //missing unique identifier
+                onEdit={displayEditForm}
+                onDelete={displayDeletePopup}
+                id={item.jobID}
+                company={item.company}
+                teacher={item.teacher}
+                role={item.role}
+                description={item.description}
+              />
+            ))}
           </div>
-        </>
-      )}
-      <ModifyDrawer data={editData} title="Edit" />
-      <ModifyDrawer data={displayAddJob} title="Add" />
-      <DeletePopup data={deleteData} />
+        ) : (
+          <>
+            <br />
+            <div style={{ height: dataGridHeight, width: "100%" }}>
+              <DataGrid
+                rows={filteredData}
+                columns={actionColumns.concat(columns)}
+                pageSize={5}
+                // pagination
+                // disableColumnFilter
+              />
+            </div>
+          </>
+        )}
+        <ModifyDrawer data={editData} title="Edit" />
+        <ModifyDrawer data={displayAddJob} title="Add" />
+        <DeletePopup data={deleteData} />
+      </div>
     </div>
   );
 };

@@ -158,139 +158,87 @@ const StudentForm = () => {
   localStorage.setItem('userRole', 'regular');
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form} enctype="multipart/form-data">
-      <p className={styles.formText}>Form</p>
-      <div className={styles.qboxes}>
-        <div className={styles.boxes}>
-          <p>What are the coding languages you have learnt during your curriculum/ITP *:</p>
-          <FormGroup>
-            <FormControlLabel 
-              control={<Checkbox checked={codingLanguages.python} onChange={(e) => handleCheckboxChange(e, 'codingLanguages')} name="python" />} 
-              label="Python" 
-            />
-            <FormControlLabel 
-              control={<Checkbox checked={codingLanguages.java} onChange={(e) => handleCheckboxChange(e, 'codingLanguages')} name="java" />} 
-              label="Java" 
-            />
-            <FormControlLabel 
-              control={<Checkbox checked={codingLanguages.cSharp} onChange={(e) => handleCheckboxChange(e, 'codingLanguages')} name="cSharp" />} 
-              label="C#" 
-            />
-            <TextField
-              id="codingLanguagesInput"
-              label="Others"
-              variant="outlined"
-              value={codingLanguages.others}
-              onChange={(e) => handleInputChange(e, 'codingLanguages')}
-              InputProps={{
-                style: {
-                  width: '150px',
-                  fontSize: '14px',
-                  backgroundColor: 'lightgrey',
-                  border: 'none',
-                },
-              }}
-            />
-          </FormGroup>
-        </div>
-        <div className={styles.boxes}>
-        <p>Rank your interests to be involved in the following types of project *:</p>
-        {projectInterests.map((interest, index) => (
-            <div key={interest.id}>
-                <label>{interest.name}: </label>
-                <select
-                    value={interest.rank}
-                    onChange={(e) => handleRankChange(e, index)}>
-                    <option value="">Select Rank</option>
-                    {projectInterests.map((_, idx) => (
-                        <option key={idx} value={idx + 1}>{idx + 1}</option>
-                    ))}
+    <div class="container">
+      <div class="py-5 text-center">
+        <h1 class="display-5">Student Form</h1>
+        <p class="lead">Answer the following questions to the best of your ability.</p>
+      </div>
+      <div class="row g-5">
+        <form onSubmit={handleSubmit} encType='multipart/form-data'>
+          <p><strong>What are the coding languages you have learnt during your curriculum/ITP *</strong></p>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="pythonCheckbox" value="python" name="python" checked={codingLanguages.python} onChange={(e) => handleCheckboxChange(e, 'codingLanguages')} />
+            <label class="form-check-label" for="pythonCheckbox">Python</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="javaCheckbox" value="java" name="java" checked={codingLanguages.java} onChange={(e) => handleCheckboxChange(e, 'codingLanguages')} />
+            <label class="form-check-label" for="javaCheckbox">Java</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="cSharpCheckbox" value="cSharp" name="cSharp" checked={codingLanguages.cSharp} onChange={(e) => handleCheckboxChange(e, 'codingLanguages')} />
+            <label class="form-check-label" for="cSharpCheckbox">C#</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="text" class="form-control" placeholder="Others" id="codingLanguagesInput" value={codingLanguages.others} onChange={(e) => handleInputChange(e, 'codingLanguages')} />
+          </div>
+          <hr />
+          <p><strong>Rank your interests to be involved in the following types of project *</strong></p>
+          <div class="row g-3">
+            {projectInterests.map((interest, index) => (
+              <div class="col-md-2" key={interest.id}>
+                <label class="form-label">{interest.name}</label>
+                <select class="form-select" value={interest.rank} onChange={(e) => handleRankChange(e, index)}>
+                  <option value="">Select Rank</option>
+                  {projectInterests.map((_, idx) => (
+                      <option key={idx} value={idx + 1}>{idx + 1}</option>
+                  ))}
                 </select>
+                <div class="invalid-feedback">
+                  Please provide a valid state.
+                </div>
+              </div>
+            ))}
+          </div>
+          <hr />
+          <p><strong>What frameworks are you experienced in</strong></p>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="reactCheckbox" value="react" name="react" checked={frameworks.react} onChange={(e) => handleCheckboxChange(e, 'frameworks')} />
+            <label class="form-check-label" for="reactCheckbox">React</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="vueJsCheckbox" value="vueJs" name="vueJs" checked={frameworks.vueJs} onChange={(e) => handleCheckboxChange(e, 'frameworks')} />
+            <label class="form-check-label" for="vueJsCheckbox">Vue.js</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="flaskCheckbox" value="flask" name="flask" checked={frameworks.flask} onChange={(e) => handleCheckboxChange(e, 'frameworks')} />
+            <label class="form-check-label" for="flaskCheckbox">Flask</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input type="text" class="form-control" placeholder="Others" id="frameworksInput" value={frameworks.others} onChange={(e) => handleInputChange(e, 'frameworks')} />
+          </div>
+          <hr />
+          <p><strong>State any interests you might want to pursue in projects/internships</strong></p>
+          <div class="form-floating">
+            <textarea class="form-control" placeholder="Others" id="interestsInput" value={interests} onChange={(e) => handleInputChange(e, 'interests')}></textarea>
+            <label htmlFor="interestsInput">Others</label>
+          </div>
+          <hr />
+          <div class="row">
+            <p><strong>Attach your resume *</strong></p>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <input class="form-control" type="file" id="fileInput" ref={fileInputRef} onChange={handleFileInputChange} accept=".pdf,.docx" />
+                {fileError && <p className={styles.errorText}>{fileError}</p>}
+              </div>
             </div>
-        ))}
-        </div>
-        <div className={styles.boxes}>
-          <p>What frameworks are you experienced in:</p>
-          <FormGroup>
-            <FormControlLabel 
-              control={<Checkbox checked={frameworks.react} onChange={(e) => handleCheckboxChange(e, 'frameworks')} name="react" />} 
-              label="React" 
-            />
-            <FormControlLabel 
-              control={<Checkbox checked={frameworks.vueJs} onChange={(e) => handleCheckboxChange(e, 'frameworks')} name="vueJs" />} 
-              label="Vue.js" 
-            />
-            <FormControlLabel 
-              control={<Checkbox checked={frameworks.flask} onChange={(e) => handleCheckboxChange(e, 'frameworks')} name="flask" />} 
-              label="Flask" 
-            />
-            <TextField
-              id="frameworksInput"
-              label="Others"
-              variant="outlined"
-              value={frameworks.others}
-              onChange={(e) => handleInputChange(e, 'frameworks')}
-              InputProps={{
-                style: {
-                  width: '150px',
-                  fontSize: '14px',
-                  backgroundColor: 'lightgrey',
-                  border: 'none',
-                },
-              }}
-            />
-          </FormGroup>
-        </div>
-        <div className={styles.boxes}>
-          <p>State your interests you might want to do in projects/internships:</p>
-          <FormGroup>
-            <TextField
-              id="interestsInput"
-              label="Others"
-              variant="outlined"
-              value={interests}
-              onChange={(e) => handleInputChange(e, 'interests')}
-              className={styles.customInterestField}
-              InputProps={{
-                style: {
-                  backgroundColor: 'lightgrey',
-                  color: 'black',
-                },
-              }}
-              multiline
-              rows={4}
-            />
-          </FormGroup>
-        </div>
-        <div className={styles.boxes}>
-          <p>Send your resume *:</p>
-          <FormGroup>
-            <input
-              id="fileInput"
-              type="file"
-              ref={fileInputRef}
-              style={{ display: 'none' }}
-              onChange={handleFileInputChange}
-              accept=".pdf,.docx"
-            />
-            <label htmlFor="fileInput">
-              <Button component="span" startIcon={<AddIcon />}>
-                Add your resume
-              </Button>
-            </label>
-            {resumeName && <p>Uploaded File: {resumeName}</p>}
-            {fileError && <p className={styles.errorText}>{fileError}</p>} { "" }
-          </FormGroup>
-        </div>
+            <div class="col-md-4 ms-auto">
+              <button type="submit" class="btn btn-primary mx-1">Submit</button>
+              <button type="button" class="btn btn-outline-secondary mx-1" onClick={resetForm}>Reset</button>
+            </div>
+          </div>
+        </form>
       </div>
-      
-      <div className={styles.buttons}>
-        <Stack spacing={2} direction="row">
-          <Button type="button" className={styles.inputbuttons} onClick={resetForm}>Reset</Button>
-          <Button type="submit" className={styles.inputbuttons}>Submit</Button>
-        </Stack>
-      </div>
-    </form>
+    </div>
   );
 };
 

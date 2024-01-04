@@ -113,40 +113,41 @@ const ImageMarked = styled('span')(({ theme }) => ({
 }));
 const TeacherLanding = () => {
   return (
-    <div className={styles.teacherContainer}>
-      <h2>Welcome to ITP/PRISM Interest Mapping Website</h2>
-
-      <Box className={styles["Box"]}>
-        {images.map((image) => (
-          <ImageButton
-            component={Link} to={image.link}
-            focusRipple
-            key={image.title}
-            style={{
-              width: image.width,
-            }}
-          >
-            <ImageSrc style={{ backgroundImage: `url(${image.url})` }} />
-            <ImageBackdrop className="MuiImageBackdrop-root" />
-            <Image>
-              <Typography
-                component="span"
-                variant="subtitle1"
-                color="inherit"
-                sx={{
-                  position: 'relative',
-                  p: 4,
-                  pt: 2,
-                  pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
-                }}
-              >
-                {image.title}
-                <ImageMarked className="MuiImageMarked-root" />
-              </Typography>
-            </Image>
-          </ImageButton>
-        ))}
-      </Box>
+    <div class="container">
+      <div className={styles.teacherContainer}>
+        <h2>Welcome to ITP/PRISM Interest Mapping Website</h2>
+        <Box className={styles["Box"]}>
+          {images.map((image) => (
+            <ImageButton
+              component={Link} to={image.link}
+              focusRipple
+              key={image.title}
+              style={{
+                width: image.width,
+              }}
+            >
+              <ImageSrc style={{ backgroundImage: `url(${image.url})` }} />
+              <ImageBackdrop className="MuiImageBackdrop-root" />
+              <Image>
+                <Typography
+                  component="span"
+                  variant="subtitle1"
+                  color="inherit"
+                  sx={{
+                    position: 'relative',
+                    p: 4,
+                    pt: 2,
+                    pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                  }}
+                >
+                  {image.title}
+                  <ImageMarked className="MuiImageMarked-root" />
+                </Typography>
+              </Image>
+            </ImageButton>
+          ))}
+        </Box>
+      </div>
     </div>
   )
 }

@@ -120,7 +120,7 @@ const ITPSummary = () => {
     );
     return (
 
-        <div>
+        <div class="container">
             <div className={styles["maindiv"]}>
                 <div className={styles["searchAdd"]}>
                     <div className={styles["search-div"]}>
