@@ -1,104 +1,135 @@
 import React, { useState, useEffect } from "react";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import ViewIcon from "@mui/icons-material/RemoveRedEye";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import IconEdit from "@mui/icons-material/Edit";
+import IconDelete from "@mui/icons-material/Delete";
+import IconCompany from "@mui/icons-material/WorkOutlineOutlined";
+import IconRole from "@mui/icons-material/SettingsOutlined";
+import IconTeacher from "@mui/icons-material/SupervisorAccountOutlined";
+import IconDescription from "@mui/icons-material/InfoOutlined";
+import IconPeriod from "@mui/icons-material/DateRange";
+import IconSpecialisation from "@mui/icons-material/ExploreOutlined";
+import IconSlots from "@mui/icons-material/OpenInNewOutlined";
 import styles from "../../styles/Teacher/Cards1.module.css";
-import Card1 from "../../components/Teacher/Card1";
-import DeletePopup from "../../components/UI/DeletePopup";
+import Card from "../../components/Teacher/Card1";
+import DeleteDialog from "../../components/UI/DeleteDialog";
 import ToolBar from "../../components/Teacher/Toolbar";
-import ModifyDrawer from "../../components/Teacher/ModifyDrawer";
+import { deleteITP, fetchITP, postITP, updateITP } from "../../api/ITP";
+import { CircularProgress } from "@mui/material";
+import FormDialog from "../../components/Teacher/FormDialog";
+import {
+  formatDateToDDMMYY,
+  formatDateToShortNumeric,
+} from "../../utils/formatTime";
+import { ToastContainer, toast } from "react-toastify";
+import Error from "../../components/error/Error";
+import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 
-const Itp = () => {
-  localStorage.setItem("userRole", "admin");
+const ITP = () => {
+  useAdminAuthCheck(true);
   //HOOKS
-  const [isCardView, setIsCardView] = useState(true);
-  const [editData, setEditData] = useState({});
-  const [deleteData, setDeleteData] = useState({});
-  const [searchJob, setSearchJob] = useState("");
-  // const [showFilter, setShowFilter] = useState(false);
-  // const [filterCriteria, setFilterCriteria] = useState({
-  //   field: "",
-  //   query: "",
-  // });
-  const [displayAddJob, setDisplayAddJob] = useState(false);
-  // const [editFormToggle, setEditFormToggle]= useState(false);
-
-  const [dataGridHeight, setDataGridHeight] = useState(
-    window.innerHeight - 400
-  );
-
   const [isFetching, setIsFetching] = useState(false);
-  const [jobListings, setJobListings] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [error, setError] = useState();
 
+  const [isCardView, setIsCardView] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const [isAddDialog, setIsAddDialog] = useState(false);
+  const [isEditDialog, setIsEditDialog] = useState(false);
+  const [isDeleteDialog, setIsDeleteDialog] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [deleteData, setDeleteData] = useState(""); //id only
+
+  const [dataGridHeight, setDataGridHeight] = useState(
+    calculateDynamicHeight(),
+  );
+
   useEffect(() => {
-    setIsFetching(true);
-
-    async function fetchITP() {
+    const fetchData = async () => {
+      setIsFetching(true);
+      setError();
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/teacher/getITPTable"
-        );
-        const resData = await response.json();
-
-        //prevent app crash if error is thrown
-        if (!response.ok) {
-          const error = new Error("Failed to fetch ITP Listing");
-          throw error;
-        }
-        setJobListings(resData.recordset);
+        const fetchedData = await fetchITP();
+        let { recordset } = fetchedData;
+        setJobs(recordset);
       } catch (error) {
-        setError({
-          message:
-            error.message || "Could not fetch places, please try again later.",
-        });
+        setError(error);
+      } finally {
         setIsFetching(false);
       }
-    }
-    fetchITP();
-  }, []);
-  console.log(jobListings);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setDataGridHeight(window.innerHeight);
     };
-
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup function to remove the event listener
-    return () => window.removeEventListener("resize", handleResize);
+    fetchData();
   }, []);
+
+  const mappedData = jobs.map((item) => ({
+    ...item,
+    id: item.opportunityID, //Required by datagrid
+    period: `${formatDateToShortNumeric(
+      item.startDate,
+    )} - ${formatDateToShortNumeric(item.endDate)}`, //Datagrid use
+  }));
+
+  const filteredData = mappedData.filter(
+    (item) =>
+      search === "" ||
+      item.opportunityID.toLowerCase().includes(search) ||
+      item.company.toLowerCase().includes(search) ||
+      item.role.toLowerCase().includes(search) ||
+      item.teacher.toLowerCase().includes(search) ||
+      item.specialisation.toLowerCase().includes(search) ||
+      item.description.toLowerCase().includes(search) ||
+      formatDateToShortNumeric(item.startDate).includes(search) ||
+      formatDateToShortNumeric(item.endDate).includes(search) ||
+      formatDateToDDMMYY(item.startDate).includes(search) ||
+      formatDateToDDMMYY(item.endDate).includes(search) ||
+      item.slots.toString().toLowerCase().includes(search),
+  );
 
   const actionColumns = [
     {
       field: "actions",
       headerName: "Actions",
-      width: 200,
+      width: 100,
       sortable: false,
       renderCell: (params) => [
         <GridActionsCellItem
           key="edit"
           className="DatagridIcons DatagridIcon_Edit"
-          icon={<EditIcon />}
+          icon={<IconEdit sx={{ color: "var(--blue)" }} />}
           label="Edit"
-        ></GridActionsCellItem>,
+          onClick={() => handleEditDialog(params.row)}
+        />,
         <GridActionsCellItem
           key="delete"
           className="DatagridIcons DatagridIcon_Delete"
-          icon={<DeleteIcon />}
+          icon={<IconDelete sx={{ color: "var(--red)" }} />}
           label="Delete"
-        ></GridActionsCellItem>,
+          onClick={() => handleDeleteDialog(params.row.opportunityID)}
+        />,
       ],
     },
   ];
 
   const columns = [
     {
-      field: "jobID",
-      headerName: "JobID",
+      field: "opportunityID",
+      headerName: "ID",
       width: 100,
+      disableColumnFilter: true,
+      disableColumnMenu: true,
+    },
+    {
+      field: "slots",
+      headerName: "Slots",
+      width: 100,
+      disableColumnFilter: true,
+      disableColumnMenu: true,
+    },
+    {
+      field: "specialisation",
+      headerName: "Specialisation",
+      width: 150,
       disableColumnFilter: true,
       disableColumnMenu: true,
     },
@@ -110,8 +141,22 @@ const Itp = () => {
       disableColumnMenu: true,
     },
     {
+      field: "role",
+      headerName: "Role",
+      width: 200,
+      disableColumnFilter: true,
+      disableColumnMenu: true,
+    },
+    {
       field: "teacher",
-      headerName: "Teacher",
+      headerName: "Teacher-In-Charge",
+      width: 200,
+      disableColumnFilter: true,
+      disableColumnMenu: true,
+    },
+    {
+      field: "period",
+      headerName: "Period",
       width: 200,
       disableColumnFilter: true,
       disableColumnMenu: true,
@@ -125,270 +170,241 @@ const Itp = () => {
     },
   ];
 
-  //static data
-  //Convert into dynamic by getting from backend through fetch
-  const rows = [
-    {
-      id: 1,
-      jobID: 1,
-      name: "Sembcorp",
-      description: "Full-Stack-Developer",
-      teacher: "Flex Tio",
-    },
-    {
-      id: 2,
-      jobID: 2,
-      name: "Sembcorp",
-      description: "Full-Stack-Developer",
-      teacher: "Flex Tio",
-    },
-  ];
-
-  const DATA = [
-    {
-      id: 1,
-      jobID: 1,
-      company: "Fakesoft",
-      role: "Developer",
-      teacher: "ANON",
-      description: "Coding in Java",
-    },
-    {
-      id: 2,
-      jobID: 2,
-      company: "YouI",
-      role: "Web Designer",
-      teacher: "BRULE",
-      description: "Design web pages",
-    },
-    {
-      id: 3,
-      jobID: 4,
-      company: "initTech",
-      role: "Tester",
-      teacher: "JCKBLK",
-      description: "Test applications",
-    },
-    {
-      id: 4,
-      jobID: 5,
-      company: "Fakesoft",
-      role: "Developer",
-      teacher: "ANON",
-      description: "Coding in Java",
-    },
-    {
-      id: 5,
-      jobID: 6,
-      company: "YouI",
-      role: "Web Designer",
-      teacher: "BRULE",
-      description: "Design web pages",
-    },
-    {
-      id: 6,
-      jobID: 7,
-      company: "initTech",
-      role: "Tester",
-      teacher: "JCKBLK",
-      description: "Test applications",
-    },
-    {
-      id: 7,
-      jobID: 8,
-      company: "Fakesoft",
-      role: "Developer",
-      teacher: "ANON",
-      description: "Coding in Java",
-    },
-    {
-      id: 8,
-      jobID: 9,
-      company: "YouI",
-      role: "Web Designer",
-      teacher: "BRULE",
-      description: "Design web pages",
-    },
-    {
-      id: 9,
-      jobID: 10,
-      company: "initTech",
-      role: "Tester",
-      teacher: "JCKBLK",
-      description: "Test applications",
-    },
-  ];
-
-  //FUNCTIONS
-
-  const handleDisplayToggle = (display) => {
-    if (display === "card") setIsCardView(true);
-    if (display === "datagrid") setIsCardView(false);
+  const handleIsCardView = (display) => {
+    setIsCardView(display === "card");
     // setIsCardView((curView) => !curView); //best practice! Ensure immutability of data. Recommended by React Team
+    // ^ not a toggle button so not suitable
   };
 
   const handleSearch = (e) => {
-    setSearchJob(e.target.value.toLowerCase());
+    setSearch(e.target.value.toLowerCase());
   };
 
-  const filteredData = DATA.filter(
-    (item) =>
-      searchJob === "" ||
-      item.description.toLowerCase().includes(searchJob) ||
-      item.role.toLowerCase().includes(searchJob) ||
-      item.teacher.toLowerCase().includes(searchJob) ||
-      item.company.toLowerCase().includes(searchJob) ||
-      item.jobID.toString().includes(searchJob)
-  );
-
-  // const filteredData = DATA.filter((item) => {
-  //   if (filterCriteria.field && filterCriteria.query) {
-  //     return item[filterCriteria.field]
-  //       .toLowerCase()
-  //       .includes(filterCriteria.query.toLowerCase());
-  //   }
-  //   return (
-  //     searchJob === "" ||
-  //     item.description.toLowerCase().includes(searchJob) ||
-  //     item.role.toLowerCase().includes(searchJob) ||
-  //     item.teacher.toLowerCase().includes(searchJob) ||
-  //     item.company.toLowerCase().includes(searchJob) ||
-  //     item.jobID.toString().includes(searchJob)
-  //   );
-  // });
-
-  const handleAddJob = () => {
-    setDisplayAddJob(!displayAddJob);
+  const handleFetchJobs = async () => {
+    setIsFetching(true);
+    try {
+      const fetchedData = await fetchITP();
+      let { recordset } = fetchedData;
+      setJobs(recordset);
+    } catch (error) {
+      setError({ message: error.message || "Failed to fetch job listings" });
+    } finally {
+      setIsFetching(false);
+    }
   };
 
-  // const handleFilter = () => {
-  //   setShowFilter(!showFilter);
-  // };
+  const handleAddDialog = () => {
+    setIsAddDialog(true);
+  };
 
-  const displayEditForm = (data) => {
+  const handleAdd = async (data) => {
+    try {
+      let fetchedData = await postITP(data);
+      toast.success(`Successfully added job`);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      handleFetchJobs();
+    }
+  };
+
+  const handleEditDialog = (data) => {
+    setIsEditDialog(true);
     setEditData(data);
-    // setEditFormToggle(!editFormToggle)
   };
 
-  const displayDeletePopup = (data) => {
-    setDeleteData(data);
+  const handleEdit = async (data) => {
+    try {
+      let fetchedData = await updateITP(data);
+      toast.success(`Successfully edited job`);
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      handleFetchJobs();
+    }
   };
+
+  const handleDeleteDialog = (id) => {
+    setIsDeleteDialog(true);
+    setDeleteData(id);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      let fetchedData = await deleteITP(id);
+      toast.success(`Successfully deleted job`);
+      // Any other state updates needed
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      handleFetchJobs();
+    }
+  };
+
+  function calculateDynamicHeight() {
+    const viewportHeight = window.innerHeight;
+    const dynamicHeight = Math.max(500, viewportHeight - 245);
+    return dynamicHeight;
+  }
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDataGridHeight(calculateDynamicHeight());
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div class="container">
+    <div>
       <div className="itp">
         <ToolBar
           count={filteredData.length}
           title="Internship Job Listings"
-          placeholder="Search by Job ID, Company, Teacher, or Role..."
+          placeholder="Search..."
           isCardView={isCardView}
-          onDisplayType={handleDisplayToggle}
+          onDisplayType={handleIsCardView}
           onSearch={handleSearch}
-          onAdd={handleAddJob}
-          // onFilter={handleFilter}
+          onAdd={handleAddDialog}
         />
-        {/* <AppBar position="static">
-          <Toolbar>
-            <Typography
-              variant="h6"
-              color="inherit"
-              component="div"
-              sx={{ flexGrow: 1 }}
-            >
-              Internship Job Listings (3)
-            </Typography>
-            <TextField
-              label="Search field"
-              type="search"
-              variant="outlined"
-              size="small"
-              sx={{ marginRight: 2 }}
-            />
-            <Button color="inherit" startIcon={<FilterIcon />}>
-              Filter
-            </Button>
-            <IconButton color="inherit">
-              <AddIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar> */}
-        {isCardView ? (
-          <div className={styles.cards}>
-            {filteredData.map((item) => (
-              <Card1
-                key={item.jobID} //Prevent suboptimal code that causes all Card1 component to rerender caused by
-                //missing unique identifier
-                onEdit={displayEditForm}
-                onDelete={displayDeletePopup}
-                id={item.jobID}
-                company={item.company}
-                teacher={item.teacher}
-                role={item.role}
-                description={item.description}
-              />
-            ))}
-          </div>
-        ) : (
-          <>
-            <br />
-            <div style={{ height: dataGridHeight, width: "100%" }}>
-              <DataGrid
-                rows={filteredData}
-                columns={actionColumns.concat(columns)}
-                pageSize={5}
-                // pagination
-                // disableColumnFilter
-              />
+        <div className="padding">
+          {isFetching ? (
+            <div style={{ textAlign: "center", padding: 20 }}>
+              <CircularProgress />
             </div>
-          </>
-        )}
-        <ModifyDrawer data={editData} title="Edit" />
-        <ModifyDrawer data={displayAddJob} title="Add" />
-        <DeletePopup data={deleteData} />
+          ) : (
+            <>
+              {error ? (
+                <Error
+                  title="Failed to fetch ITP Job Listings"
+                  message={error.message}
+                />
+              ) : (
+                <>
+                  {isCardView ? (
+                    <div className={styles.cards}>
+                      {filteredData.map((item) => (
+                        <Card
+                          key={item.opportunityID}
+                          onEdit={handleEditDialog}
+                          onDelete={handleDeleteDialog}
+                          data={item}
+                          headerData={{
+                            icon: (
+                              <IconSlots
+                                sx={{ fontSize: 32, color: "#9699C0" }}
+                              />
+                            ),
+                            value: item.slots,
+                          }}
+                          bodyData={[
+                            {
+                              icon: (
+                                <IconCompany
+                                  sx={{ fontSize: 32, color: "#9699C0" }}
+                                />
+                              ),
+                              label: "Company",
+                              value: item.company,
+                            },
+                            {
+                              icon: (
+                                <IconRole
+                                  sx={{ fontSize: 32, color: "#9699C0" }}
+                                />
+                              ),
+                              label: "Role",
+                              value: item.role,
+                            },
+                            {
+                              icon: (
+                                <IconTeacher
+                                  sx={{ fontSize: 32, color: "#9699C0" }}
+                                />
+                              ),
+                              label: "Teacher",
+                              value: item.teacher,
+                            },
+                            {
+                              icon: (
+                                <IconSpecialisation
+                                  sx={{ fontSize: 32, color: "#9699C0" }}
+                                />
+                              ),
+                              label: "Specialisation",
+                              value: item.specialisation,
+                            },
+                            {
+                              icon: (
+                                <IconPeriod
+                                  sx={{ fontSize: 32, color: "#9699C0" }}
+                                />
+                              ),
+                              label: "Period",
+                              value: `${formatDateToDDMMYY(
+                                item.startDate,
+                              )}-${formatDateToDDMMYY(item.endDate)}`,
+                            },
+                          ]}
+                          description={item.description}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <>
+                      <br />
+                      <div
+                        style={{
+                          height: dataGridHeight,
+                          width: "100%",
+                          // padding: "0 20px",
+                        }}
+                      >
+                        <DataGrid
+                          rows={filteredData}
+                          columns={actionColumns.concat(columns)}
+                          pageSize={5}
+                        />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </div>
       </div>
+      <FormDialog
+        title="Add"
+        type="ITP"
+        data={isAddDialog}
+        isOpen={isAddDialog}
+        onClose={() => setIsAddDialog(false)}
+        onFetch={handleFetchJobs}
+        onSubmit={handleAdd}
+      />
+      <FormDialog
+        title="Edit"
+        type="ITP"
+        data={editData}
+        isOpen={isEditDialog}
+        onClose={() => setIsEditDialog(false)}
+        onFetch={handleFetchJobs}
+        onSubmit={handleEdit}
+      />
+      <DeleteDialog
+        id={deleteData}
+        isOpen={isDeleteDialog}
+        onClose={() => setIsDeleteDialog(false)}
+        onSubmit={handleDelete}
+      />
+      <ToastContainer />
     </div>
   );
 };
 
-export default Itp;
-
-// const Itp = () => {
-
-//     const columns = [
-//       { field: "jobID", headerName: "JobID", width: 100 },
-//       { field: "name", headerName: "Name", width: 100 },
-//       { field: "description", headerName: "Description", width: 300 },
-//       { field: "teacher", headerName: "Teacher", width: 100 },
-//     ];
-
-//     //static data
-//     //Convert into dynamic by getting from backend through fetch
-//     const rows = [
-//       {
-//         id: 1,
-//         jobID: 1,
-//         name: "Sembcorp",
-//         description: "Full-Stack-Developer",
-//         teacher: "Flex Tio",
-//       },
-//       {
-//         id: 2,
-//         jobID: 2,
-//         name: "Sembcorp",
-//         description: "Full-Stack-Developer",
-//         teacher: "Flex Tio",
-//       },
-//     ];
-//     return (
-//       <div className="itp">
-//         <h2>ITPqwe</h2>
-// <div style={{ height: 400, width: "100%" }}>
-//   <DataGrid
-//     rows={rows}
-//     columns={actionColumns.concat(columns)}
-//     pageSize={5}
-//   />
-// </div>
-//       </div>
-//     );
-//   };
+export default ITP;

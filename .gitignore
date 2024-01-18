@@ -23,3 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 server/uploads
+
+
+.git_old

@@ -1,13 +1,13 @@
- .form{
-    border-width: 2px;
-    border-color: #1E56AA;
-    border-style: solid;
-    margin:20px;
+.form {
+  border-width: 2px;
+  border-color: #1e56aa;
+  border-style: solid;
+  margin: 20px;
 }
-.formText{
-    font-size: 1cm;
-    color: #E11212;
-    margin:10px;
+.formText {
+  font-size: 1cm;
+  color: #e11212;
+  margin: 10px;
 }
 .qboxes {
   display: flex;
@@ -21,7 +21,7 @@
   padding: 5px;
   margin: 10px;
   border-width: 1px;
-  border-color: #D82020;
+  border-color: #d82020;
   border-style: solid;
   border-radius: 5px;
 }
@@ -41,13 +41,12 @@
 } */
 /* .smallerTextField {
   width: 150px; /* Adjust the width as per your requirement */
-  /* Adjust the height as per your requirement */
-  /*font-size: 14px; /* Adjust the font size as per your requirement */
-  /*background-color: lightgrey;
+/* Adjust the height as per your requirement */
+/*font-size: 14px; /* Adjust the font size as per your requirement */
+/*background-color: lightgrey;
   color: white;
   border: none;
 } */
-
 
 .customInterestField {
   width: 70%;
@@ -69,7 +68,7 @@
 .editbutton {
   width: 100px;
   border: none;
-  background: #1E56AA !important;
+  background: #1e56aa !important;
   color: white !important;
   padding: 6px 12px;
   margin: 5px;
@@ -81,7 +80,7 @@
 .inputbuttons {
   width: 100px;
   border: none;
-  background: #1E56AA !important;
+  background: #1e56aa !important;
   color: white !important;
   padding: 6px 12px;
   margin: 5px;

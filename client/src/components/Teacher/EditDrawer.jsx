@@ -50,10 +50,8 @@ const EditDrawer = (props) => {
     setFormToggle(!formToggle);
   };
   const handleUpdate = (e) => {
-    console.log(e);
     e.preventDefault();
     setFormToggle(!formToggle);
-    console.log(userInput);
   };
   return (
     !formToggle && (

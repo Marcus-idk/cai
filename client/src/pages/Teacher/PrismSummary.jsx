@@ -6,22 +6,22 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import styles from "../../styles/Teacher/ITP-Prism.module.css";
-import EditDrawer from "../../components/Teacher/PRISMSumEditDrawer";
+import { fetchPRISMSummary } from "../../api/PRISM";
+import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import axios from "axios";
+import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 
 const PrismSummary = (props) => {
+  useAdminAuthCheck(true);
   const ODD_OPACITY = 0.2;
   const [searchText, setSearchText] = useState("");
   const [editData, setEditData] = useState({});
   const [isEditDrawerOpen, setEditDrawerOpen] = useState(false);
   const [data, setData] = useState([]);
-  useEffect(() => {
-    // Fetch data from the backend when the component mounts
-    fetch("http://localhost:5000/api/teacher/getAllPRISM")
-      .then((response) => response.json())
-      .then(console.log(data), (data) => setData(data))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  const [isFetching, setIsFetching] = useState(false);
+  const [isEditDialog, setIsEditDialog] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [error, setError] = useState();
 
   const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     [`& .${gridClasses.row}.even`]: {
@@ -35,7 +35,7 @@ const PrismSummary = (props) => {
       "&.Mui-selected": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY + theme.palette.action.selectedOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity,
         ),
 
         "&:hover, &.Mui-hovered": {
@@ -43,13 +43,13 @@ const PrismSummary = (props) => {
             theme.palette.primary.main,
             ODD_OPACITY +
               theme.palette.action.selectedOpacity +
-              theme.palette.action.hoverOpacity
+              theme.palette.action.hoverOpacity,
           ),
           // Reset on touch devices, it doesn't add specificity
           "@media (hover: none)": {
             backgroundColor: alpha(
               theme.palette.primary.main,
-              ODD_OPACITY + theme.palette.action.selectedOpacity
+              ODD_OPACITY + theme.palette.action.selectedOpacity,
             ),
           },
         },
@@ -57,21 +57,12 @@ const PrismSummary = (props) => {
     },
   }));
   const columns = [
-    { field: "id", headerName: "Project ID", width: 150 },
-    { field: "projectName", headerName: "Project Name", width: 400 },
-    { field: "tic", headerName: "Teacher-In-Charge", width: 350 },
-    { field: "student", headerName: "Student Name", width: 200 },
+    { field: "OpportunityID", headerName: "Opportunity ID", width: 120 },
+    { field: "Title", headerName: "Project Name", width: 400 },
+    { field: "FullName", headerName: "Teacher-In-Charge", width: 300 },
+    { field: "StudentID", headerName: "AdminNo", width: 140 },
+    { field: "StudName", headerName: "Student Name", width: 200 },
   ];
-
-  /*    const rows = data.map((row) => ({
-    id: row.column1,
-    projectName: row.column2,
-    tic: row.column3,
-    student: row.column5,
-    
-  })); */
-
-  const rows = {};
 
   const displayEditForm = (data) => {
     setEditData(data);
@@ -81,26 +72,70 @@ const PrismSummary = (props) => {
   const closeEditDrawer = () => {
     setEditDrawerOpen(false);
   };
-  const handleEdit = () => {
-    props.onEdit({
-      id: props.id,
-      projectName: props.projectName,
-      tic: props.tic,
-      student: props.student,
-    });
+  const handleEditDialog = (data) => {
+    setIsEditDialog(true);
+    setEditData(data);
   };
   const handleSearch = (event) => {
     setSearchText(event.target.value);
   };
 
+  useEffect(() => {
+    // Fetch data from the backend when the component mounts
+    const fetchData = async () => {
+      setIsFetching(true);
+      setError();
+      try {
+        const fetchedData = await fetchPRISMSummary();
+        let { recordset } = fetchedData;
+        setProjects(recordset);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchData();
+  }, []);
+  const handleEdit = async (data) => {
+    try {
+    } catch (error) {
+      console.log(data);
+    } finally {
+      handleFetchInfo();
+    }
+  };
+  const handleFetchInfo = async () => {
+    setIsFetching(true);
+    try {
+      const fetchedData = await fetchPRISMSummary();
+      let { recordset } = fetchedData;
+      setProjects(recordset);
+    } catch (error) {
+      setError({ message: error.message || "Failed to fetch job listings" });
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const mappedData = projects.map((item) => ({
+    ...item,
+    id: item.OpportunityID, //Required by datagrid
+  }));
+  const rows = mappedData.filter(
+    (item) =>
+      item.OpportunityID.toLowerCase() ||
+      item.title.toLowerCase() ||
+      item.teacher.toLowerCase() ||
+      item.teacher.toLowerCase(),
+  );
   const filteredRows = rows.filter((row) =>
     Object.values(row).some(
       (value) =>
         typeof value === "string" && // Check if the value is a string
-        value.toLowerCase().includes(searchText.toLowerCase())
-    )
+        value.toLowerCase().includes(searchText.toLowerCase()),
+    ),
   );
-
   const actionColumns = [
     {
       field: "actions",
@@ -110,7 +145,7 @@ const PrismSummary = (props) => {
         <GridActionsCellItem
           className="DatagridIcons DatagridIcon_Edit"
           icon={<EditIcon />}
-          onClick={() => displayEditForm(params.row)}
+          onClick={() => handleEditDialog(params.row)}
           label="Edit"
         ></GridActionsCellItem>,
       ],
@@ -154,6 +189,15 @@ const PrismSummary = (props) => {
           <EditDrawer data={editData} onClose={closeEditDrawer} />
         )}
       </div>
+      <EditDrawer
+        title="Edit"
+        type="ITP"
+        data={editData}
+        isOpen={isEditDialog}
+        onClose={() => setIsEditDialog(false)}
+        onFetch={handleFetchInfo}
+        onSubmit={handleEdit}
+      />
     </div>
   );
 };

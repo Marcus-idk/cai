@@ -6,21 +6,21 @@ const EditDrawer = (props) => {
   const [formToggle, setFormToggle] = useState(false);
 
   const [userInput, setUserInput] = useState({
-    company: 'MAS',
-    jobName: 'Tester',
-    tic: 'Lim Khai Cher',
+    company: "MAS",
+    jobName: "Tester",
+    tic: "Lim Khai Cher",
     student: "",
   });
 
   useEffect(() => {
     setFormToggle(false);
     setUserInput({
-      projectName: props.data.projectName,
-      tic: props.data.tic,
+      projectName: props.data.opportunity,
+      tic: props.data.teacher,
       student: props.data.student,
     });
   }, [props.data]);
-  
+
   const handleInputChange = (identifier, value) => {
     const fieldToMap = {
       student: "student",
@@ -40,10 +40,8 @@ const EditDrawer = (props) => {
     setFormToggle(!formToggle);
   };
   const handleUpdate = (e) => {
-    console.log(e);
     e.preventDefault();
     setFormToggle(!formToggle);
-    console.log(userInput);
   };
   return (
     !formToggle && (
@@ -54,13 +52,22 @@ const EditDrawer = (props) => {
               Edit Project <strong>{props.data.id}</strong>
             </h2>
             <div className={styles["input-wrapper"]}>
-              <label>Project Name: <strong>{props.data.projectName}</strong></label>
+              <label>
+                Project Name: <strong>{props.data.Title}</strong>
+              </label>
             </div>
             <div className={styles["input-wrapper"]}>
-              <label>Teacher In Charge: <strong>{props.data.tic}</strong> </label>
+              <label>
+                Teacher In Charge: <strong>{props.data.FullName}</strong>{" "}
+              </label>
             </div>
             <div className={styles["input-wrapper"]}>
-              <label>Student Name: </label>
+              <label>
+                Student Name: <strong>{props.data.StudName}</strong>{" "}
+              </label>
+            </div>
+            <div className={styles["input-wrapper"]}>
+              <label>Admin No: </label>
               <TextField
                 className={styles.inputBox}
                 sx={{
@@ -70,7 +77,7 @@ const EditDrawer = (props) => {
                   ".MuiInputBase-input": { padding: "0 14px", height: "40px" },
                   ".MuiOutlinedInput-root": { height: "40px" },
                 }}
-                value={userInput.student}
+                value={userInput.teacher}
                 onChange={(e) => handleInputChange("student", e.target.value)}
               />
             </div>

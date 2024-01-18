@@ -6,7 +6,8 @@
   "scripts": {
     "client": "npm start --prefix client",
     "server": "npm run dev --prefix server",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "prettier": "npx prettier . --write"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,12 @@
   },
   "homepage": "https://github.com/Armisticez/skillset-interest-mapping-application#readme",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "concurrently": "^8.2.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "prettier": "3.2.1"
   }
 }

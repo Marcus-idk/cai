@@ -30,7 +30,7 @@ def generate_job_name(details, outcomes, skills):
         "NOTE: if any one of the details, learning outcomes or skills are empty, return None"
     )
     response = clientOpenAI.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-1106-preview",
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -72,7 +72,7 @@ def extractTagsForCodingFrameworks(text):
         "\nExpected output format: 'Tags: CSS, Java, Python'. Separate tags with commas. If the input is too general or lacks specific references, return 'General Coding' or 'No Relevant Context'."
     )
     response = clientOpenAI.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-1106-preview",
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -89,7 +89,7 @@ def extractTagsForCompanyInterests(text):
         "\nExpected output format: 'Tags: Machine Learning, Web Development'. Separate tags with commas. If the input is too general or lacks specific references, return 'General Company Interest' or 'No Relevant Context'."
     )
     response = clientOpenAI.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-1106-preview",
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -111,7 +111,7 @@ def standardizeTechName(tech_name):
         "\nStandardized Version:"
     )
     response = clientOpenAI.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-1106-preview",
         messages=[
             {"role": "user", "content": prompt}
         ]
@@ -124,7 +124,7 @@ def standardizeInterest(interests):
         "Please process the following text by expanding any short forms or abbreviations to their full forms. Keep the output brief, ideally just a few words. For instance, 'Web Dev' should be converted to 'Web Development'. Here's the text I'd like you to transform: " + interests
     )
     response = clientOpenAI.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4-1106-preview",
         messages=[
             {"role": "user", "content": prompt}
         ]

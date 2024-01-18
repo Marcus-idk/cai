@@ -1,5 +1,5 @@
 .modifyDrawer {
-    /* position: absolute;
+  /* position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -10,7 +10,7 @@
 }
 
 form {
-    /* padding: 20px; */
+  /* padding: 20px; */
 }
 
 /* form h2 {
@@ -19,47 +19,47 @@ form {
 } */
 
 .modifyDrawer form h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
 
-.input-wrapper{ 
-    display: flex;
-    flex-direction: column;
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
 }
 
 .input-wrapper label {
-    margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .inputBox {
-    /* height: 30px !important; */
+  /* height: 30px !important; */
 }
 
 .buttons-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
 }
 
-.cancelButton, .updateButton {
-    width: 160px;
-    height: 40px;
-    font-size: 16px;
-    border-radius: 3px;
+.cancelButton,
+.updateButton {
+  width: 160px;
+  height: 40px;
+  font-size: 16px;
+  border-radius: 3px;
 }
 
 .cancelButton {
-    background: none;
-    border: 2px solid var(--blue);
-    margin-right: 20px;
-    color: var(--blue);
-    font-weight: bold;
+  background: none;
+  border: 2px solid var(--blue);
+  margin-right: 20px;
+  color: var(--blue);
+  font-weight: bold;
 }
 
-
 .updateButton {
-    background: var(--blue);
-    color: #fff;
-    border: none;
+  background: var(--blue);
+  color: #fff;
+  border: none;
 }

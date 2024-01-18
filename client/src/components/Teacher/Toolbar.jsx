@@ -18,11 +18,6 @@ const ToolBar = ({
   onSearch,
   onAdd,
 }) => {
-  // const [value, setValue] = useState('');
-  // const handleSearch = (e) => {
-  //   setValue(e.target.value);
-  //   console.log(value);
-  // };
   return (
     <div className={styles.toolbar}>
       <div className={styles.left}>

@@ -34,7 +34,7 @@ import NavbarLink from "./NavbarLink.jsx";
 // };
 
 const Navbar = () => {
-  const userRole = localStorage.getItem('userRole');
+  const userRole = localStorage.getItem("userRole");
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -43,14 +43,16 @@ const Navbar = () => {
   };
 
   const path = useLocation().pathname;
-  console.log(path);
 
   if (!userRole) return null;
   return (
     <div class="container">
       <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
         <div class="col-md-3 mb-2 mb-md-0">
-          <a href="#" class="d-inline-flex link-body-emphasis text-decoration-none">
+          <a
+            href="#"
+            class="d-inline-flex link-body-emphasis text-decoration-none"
+          >
             <img src={nyplogo} alt="" height="75" />
           </a>
         </div>
@@ -64,17 +66,39 @@ const Navbar = () => {
           )}
           {userRole === "admin" && (
             <>
-              <NavbarLink linkPath="/teacherlanding" currPath={path} text="Home" />
+              <NavbarLink
+                linkPath="/teacherlanding"
+                currPath={path}
+                text="Home"
+              />
               <NavbarLink linkPath="/teacher/itp" currPath={path} text="ITP" />
-              <NavbarLink linkPath="/teacher/itpsummary" currPath={path} text="ITP Summary" />
-              <NavbarLink linkPath="/teacher/prism" currPath={path} text="Prism" />
-              <NavbarLink linkPath="/teacher/prismsummary" currPath={path} text="Prism Summary" />
-              <NavbarLink linkPath="/teacher/viewallstudents" currPath={path} text="Students" />
+              <NavbarLink
+                linkPath="/teacher/itpsummary"
+                currPath={path}
+                text="ITP Summary"
+              />
+              <NavbarLink
+                linkPath="/teacher/prism"
+                currPath={path}
+                text="Prism"
+              />
+              <NavbarLink
+                linkPath="/teacher/prismsummary"
+                currPath={path}
+                text="Prism Summary"
+              />
+              <NavbarLink
+                linkPath="/teacher/viewallstudents"
+                currPath={path}
+                text="Students"
+              />
             </>
           )}
         </ul>
 
-        <div class="col-md-3 text-end"><LogoutButton /></div>
+        <div class="col-md-3 text-end">
+          <LogoutButton />
+        </div>
       </header>
     </div>
   );

@@ -4,10 +4,10 @@
 
 Packages Installed:
 
-Root - concurrently
---
-Client - react-router-dom, axios, fetch
---
+## Root - concurrently
+
+## Client - react-router-dom, axios, fetch
+
 Server - cors, dotenv, express, mssql, msnodesqlv8, odbc(undeclared), tedious (undeclared)
 
 Database Environment:

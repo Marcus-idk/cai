@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import Modal from "../UI/Modal";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Divider } from "@mui/material";
 
 const ModifyDrawer = ({ data, title }) => {
   const [formToggle, setFormToggle] = useState(false);
@@ -74,6 +75,7 @@ const ModifyDrawer = ({ data, title }) => {
               <h2>
                 {title} Job <strong>{data.id}</strong>
               </h2>
+              <Divider />
               <div className={styles["input-wrapper"]}>
                 <label>Company: </label>
                 <TextField
@@ -94,7 +96,7 @@ const ModifyDrawer = ({ data, title }) => {
                 />
               </div>
               <div className={styles["input-wrapper"]}>
-                <label>Job Role: </label>
+                <label>Role: </label>
                 <TextField
                   className={styles.inputBox}
                   sx={{

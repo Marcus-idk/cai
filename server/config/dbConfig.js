@@ -4,18 +4,19 @@ const sql = require("mssql");
 // const sqlv8 = require("mssql/msnodesqlv8");
 
 async function connectDB() {
-  if (process.env.DB_Environment === "Azure") {
+  if (process.env.DB_Environment === "AWS") {
     const config = {
-      user: process.env.Azure_DB_User,
-      password: process.env.Azure_DB_Password,
-      server: process.env.Azure_DB_Server,
-      port: Number(process.env.Azure_DB_Port),
-      database: process.env.Azure_DB_Name,
+      user: process.env.AWS_EC2_USER,
+      password: process.env.AWS_EC2_PASSWORD,
+      server: process.env.AWS_EC2_SERVER,
+      port: +process.env.AWS_EC2_PORT,
+      database: process.env.AWS_EC2_NAME,
       authentication: {
         type: "default",
       },
       options: {
         encrypt: true,
+        trustServerCertificate: true,
       },
     };
 
