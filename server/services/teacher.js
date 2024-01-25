@@ -1,5 +1,9 @@
 const dbConfig = require("../config/dbConfig");
 const sql = require("mssql");
+const bcrypt = require("bcrypt");
+const {
+  handleMatchingAndUpdate,
+} = require("../controllers/matchingController");
 
 async function getAllStudents() {
   const connection = await dbConfig.connectDB();
@@ -15,38 +19,19 @@ async function getStudent(id) {
   return result;
 }
 
-async function AddStudent(id, name, resume, spec, gpa) {
-  const connection = await dbConfig.connectDB();
-  const result = await connection.query(
-    "EXEC AddStudent(" +
-      id +
-      "," +
-      name +
-      "," +
-      resume +
-      "," +
-      spec +
-      "," +
-      gpa +
-      "," +
-      ")",
-  );
-  connection.close();
-  return result;
-}
-
 async function UpdateStudent(StudentID, FullName, Specialisation, GPA) {
   const connection = await dbConfig.connectDB();
   try {
     const query = `
-      UPDATE Students
-      SET 
-        FullName = '?',
-        Specialisation = '?',
-        GPA = '?'
-      WHERE StudentID = '?'`;
-    const result = await connection.query(query, [FullName, Specialisation, GPA, StudentID]);
-
+    UPDATE S
+    SET 
+      U.FullName = '${FullName}',
+      S.Specialisation = '${Specialisation}',
+      S.GPA = '${GPA}'
+      FROM users U, students S
+    WHERE S.StudentID = '${StudentID}' AND U.userid = S.userid;
+    `;
+    const result = await connection.query(query);
     return result;
   } catch (err) {
     console.error("Error in UpdateStudent", err);
@@ -55,7 +40,6 @@ async function UpdateStudent(StudentID, FullName, Specialisation, GPA) {
     connection.close();
   }
 }
-
 
 async function Assign(Studid, OppID, comments) {
   const connection = await dbConfig.connectDB();
@@ -166,14 +150,6 @@ async function AllITPSummary() {
   return result;
 }
 
-// async function AddITP(company,job,desc,Slots,Teach,spec,startDate,endDate) {
-//     const connection = await dbConfig.connectDB();
-//     const result = await connection.query('EXEC AddITP('+company +','+job +','+desc+','+Slots+','+
-//     Teach+','+spec+','+startDate+','+endDate+',' +')');
-//     connection.close();
-//     return result;
-// }
-
 async function AddITP(
   company,
   role,
@@ -187,18 +163,17 @@ async function AddITP(
   let connection;
 
   try {
-    const connection = await dbConfig.connectDB(); // Ensure proper connection handling
+    const connection = await dbConfig.connectDB();
     const request = new sql.Request(connection);
 
-    // Prevent SQL Injection
-    request.input("Company", sql.NVarChar(50), company);
-    request.input("JobRole", sql.NVarChar(50), role);
-    request.input("Description", sql.NVarChar(sql.MAX), description);
-    request.input("Slots", sql.Int, slots);
-    request.input("Teacher", sql.NVarChar(50), teacher);
-    request.input("Specialisation", sql.Char(3), specialisation);
     request.input("StartDate", sql.DateTime, new Date(startDate));
     request.input("EndDate", sql.DateTime, new Date(endDate));
+    request.input("Slots", sql.Int, slots);
+    request.input("Description", sql.NVarChar(256), description);
+    request.input("Specialisation", sql.VarChar(3), specialisation);
+    request.input("Teacher", sql.NVarChar(256), teacher);
+    request.input("Company", sql.NVarChar(256), company);
+    request.input("JobRole", sql.NVarChar(128), role);
 
     const result = await request.execute("AddITP");
     return result;
@@ -289,15 +264,15 @@ async function UpdateITP(
     const connection = await dbConfig.connectDB();
     const request = new sql.Request(connection);
 
-    request.input("OpportunityID", sql.Char(5), id);
-    request.input("Company", sql.NVarChar(50), company);
-    request.input("JobRole", sql.NVarChar(50), role);
-    request.input("Description", sql.NVarChar(sql.MAX), description);
-    request.input("Slots", sql.Int, slots);
-    request.input("Teacher", sql.NVarChar(50), teacher);
-    request.input("Specialisation", sql.Char(3), specialisation);
+    request.input("OpportunityID", sql.Int, id);
     request.input("StartDate", sql.DateTime, new Date(startDate));
     request.input("EndDate", sql.DateTime, new Date(endDate));
+    request.input("Slots", sql.Int, slots);
+    request.input("Description", sql.NVarChar(256), description);
+    request.input("Specialisation", sql.VarChar(3), specialisation);
+    request.input("TeacherName", sql.NVarChar(256), teacher);
+    request.input("Company", sql.NVarChar(256), company);
+    request.input("JobRole", sql.NVarChar(128), role);
 
     const result = await request.execute("UpdateITP");
     return result;
@@ -317,7 +292,7 @@ async function deleteITP(id) {
     const connection = await dbConfig.connectDB();
     const request = new sql.Request(connection);
 
-    request.input("OpportunityID", sql.Char(5), id.toString());
+    request.input("OpportunityID", sql.Int, id);
 
     const result = await request.execute("DelITP");
     return result;
@@ -353,13 +328,32 @@ async function deletePRISM(id) {
 
 async function bulkInsertStudentData(studentData) {
   const connection = await dbConfig.connectDB();
-  
+
   try {
     for (const student of studentData) {
-      let query = "INSERT INTO Students (StudentID, FullName, GPA, Specialisation) VALUES (?, ?, ?, ?)";
-      const values = [student.adminNo, student.studentName, student.gpa, student.specialization];
+      let pw = await bcrypt.hash(student.password, 5);
+      // let studentQuery = `
+      //   INSERT INTO Students (StudentID, GPA, Specialisation)
+      //   VALUES ('${student.adminNo}', ${student.gpa}, '${student.specialization}')`;
+      // let userQuery = `
+      //   INSERT INTO Users (FullName, Email, DateRegistered, Deleted, Password)
+      //   VALUES ('${student.studentName}', '${student.adminNo}@mymail.nyp.edu.sg', GETDATE(), 0, '${pw}')`;
+      let q = `
+        BEGIN TRANSACTION [T1]
+        BEGIN TRY
+            INSERT INTO Users (Password, Email, DateRegistered, FullName, Deleted)
+            VALUES ('${pw}', '${student.adminNo}@mymail.nyp.edu.sg', GETDATE(), '${student.studentName}', 0);
 
-      await connection.query(query, values);
+            INSERT INTO Students (StudentID, UserID, Specialisation, GPA)
+            VALUES ('${student.adminNo}', Scope_identity(), '${student.specialization}', '${student.gpa}');
+            COMMIT TRANSACTION [T1]
+        END TRY
+        BEGIN CATCH
+            ROLLBACK TRANSACTION [T1]
+        END CATCH
+      `;
+
+      await connection.query(q);
     }
 
     return { message: "All students inserted successfully" };
@@ -371,10 +365,136 @@ async function bulkInsertStudentData(studentData) {
   }
 }
 
+async function beginMatching() {
+  const connection = await dbConfig.connectDB();
+
+  try {
+    const studentQueryResults = await connection.query(`
+    SELECT 
+      s.StudentID, 
+      s.Specialisation, 
+      s.Citizenship, 
+      s.GPA, 
+      STRING_AGG(t.TagName, ', ') AS Tags
+    FROM 
+      Students s
+    JOIN 
+      TagKey tk ON s.StudentID = tk.StudentID
+    JOIN 
+      Tags t ON tk.TagID = t.TagID
+    GROUP BY 
+      s.StudentID, s.Specialisation, s.Citizenship, s.GPA;
+    `);
+    const students = studentQueryResults.recordset.map((student) => ({
+      admin_number: student.StudentID,
+      specialization: student.Specialisation,
+      citizenship: student.Citizenship,
+      gpa: student.GPA,
+      tags: student.Tags.split(", "),
+    }));
+
+    const internshipQueryResults = await connection.query(`
+    SELECT
+      i.OpportunityID, 
+      i.JobRole, 
+      STRING_AGG(t.TagName, ', ') AS Tags, 
+      o.CitizenType, 
+      o.Slots AS Vacancies
+    FROM 
+      ITP i
+    JOIN 
+      Opportunities o ON i.OpportunityID = o.OpportunityID
+    JOIN 
+      TagKey tk ON o.OpportunityID = tk.OpportunityID
+    JOIN 
+      Tags t ON tk.TagID = t.TagID
+    WHERE 
+      o.Deleted = 0
+    GROUP BY 
+      i.OpportunityID, i.JobRole, o.CitizenType, o.Slots;
+    `);
+    const internships = internshipQueryResults.recordset.map((internship) => ({
+      opportunity_id: internship.OpportunityID,
+      job_role: internship.JobRole,
+      tags: internship.Tags.split(", "),
+      citizen_type: internship.CitizenType,
+      vacancies: internship.Vacancies,
+    }));
+
+    console.log(students);
+    console.log(internships);
+    const matchResults = await handleMatchingAndUpdate(students, internships);
+
+    for (const match of matchResults) {
+      await matchStudentsToOpportunities(
+        match.studentId,
+        match.opportunityId,
+        connection,
+      );
+    }
+
+    return {
+      message: "Matching process completed successfully",
+      details: matchResults,
+    };
+  } catch (err) {
+    console.error("Error during the matching process", err);
+    throw err;
+  } finally {
+    connection.close();
+  }
+}
+
+async function matchStudentsToOpportunities(
+  studentId,
+  opportunityId,
+  connection,
+) {
+}
+
+async function insertIntoOpportunities(opportunityData) {
+  const connection = await dbConfig.connectDB();
+
+  try {
+    console.log(opportunityData);
+
+    let query = `INSERT INTO Opportunities (Type, Slots, CitizenType) VALUES ('${Opportunities.Type}', '${Opportunities.Slots}', '${Opportunities.CitizenType}')`;
+    
+    console.log("Executing query:", query);
+    await connection.query(query);
+
+    return { message: "Opportunity inserted successfully" };
+  } catch (err) {
+    console.error("Error during database operation", err);
+    throw err;
+  } finally {
+    connection.close();
+  }
+}
+
+async function insertIntoITP(itpData) {
+  const connection = await dbConfig.connectDB();
+
+  try {
+    console.log(itpData);
+
+    let query = `INSERT ITO ITP (OpportunityID, Company, JobRole, Description) VALUES (${itpData.OpportunityID}, '${itpData.Company}', '${itpData.JobRole}', '${itpData.Description}')`;
+
+    console.log("Executing query:", query);
+    await connection.query(query);
+
+    return { message: "ITP data inserted successfully" };
+  } catch (err) {
+    console.error("Error during database operation", err);
+    throw err;
+  } finally {
+    connection.close();
+  }
+}
+
 module.exports = {
   getAllStudents,
   getStudent,
-  AddStudent,
   UpdateStudent,
   Assign,
   EditAssign,
@@ -393,4 +513,8 @@ module.exports = {
   UpdateITP,
   deleteITP,
   deletePRISM,
+  bulkInsertStudentData,
+  beginMatching,
+  insertIntoOpportunities,
+  insertIntoITP
 };

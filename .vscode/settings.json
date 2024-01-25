@@ -1,3 +1,8 @@
 {
-    "CodeGPT.apiKey": "Ollama"
+    "CodeGPT.apiKey": "Ollama",
+    "genieai.enableConversationHistory": true,
+    "genieai.openai.temperature": 0.5,
+    "genieai.openai.maxTokens": 4096,
+    "terminal.integrated.fastScrollSensitivity": 3,
+    "terminal.integrated.mouseWheelScrollSensitivity": 0.2
 }

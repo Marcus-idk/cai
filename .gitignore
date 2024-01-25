@@ -24,5 +24,4 @@ yarn-error.log*
 
 server/uploads
 
-
-.git_old
+.vscode

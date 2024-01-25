@@ -5,7 +5,6 @@ const express = require("express");
 const teacherRoutes = require("./routes/api/teacher");
 const studentRoutes = require("./routes/api/student");
 const loginRoutes = require("./routes/api/login");
-// const matchingRoutes = require('./routes/api/matching');
 const cors = require("cors");
 
 //express app
@@ -26,7 +25,6 @@ app.use((req, res, next) => {
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/user", studentRoutes);
 app.use("/api/login", loginRoutes);
-// app.use("/api/matching", matchingRoutes);
 //listen to port number
 app.listen(process.env.API_Port, () => {
   console.log("listening on port", process.env.API_Port);

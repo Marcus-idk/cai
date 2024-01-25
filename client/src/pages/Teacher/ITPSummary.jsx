@@ -10,6 +10,7 @@ import { fetchITPSummary, updateITPSummary } from "../../api/ITP";
 import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import Edit from "@mui/icons-material/Edit";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
+import Button from "@mui/material/Button";
 
 const ITPSummary = () => {
   useAdminAuthCheck(true);
@@ -61,6 +62,8 @@ const ITPSummary = () => {
       setError("");
       try {
         const fetchedData = await fetchITPSummary();
+        console.log("fetchdata")
+        console.log(fetchedData)
         let { recordset } = fetchedData;
         setJobs(recordset);
       } catch (error) {
@@ -75,7 +78,7 @@ const ITPSummary = () => {
 
   const mappedData = jobs.map((item) => ({
     ...item,
-    id: item.OpportunityID, //Required by datagrid
+    id: item.OpportunityID,
   }));
   const columns = [
     { field: "OpportunityID", headerName: "Opportunity ID", width: 120 },
@@ -145,6 +148,8 @@ const ITPSummary = () => {
     setIsFetching(true);
     try {
       const fetchedData = await fetchITPSummary();
+      console.log("fetchdata")
+      console.log(fetchedData)
       let { recordset } = fetchedData;
       setJobs(recordset);
     } catch (error) {
@@ -160,6 +165,33 @@ const ITPSummary = () => {
         value.toLowerCase().includes(searchText.toLowerCase()),
     ),
   );
+  const handleBeginMatching = async () => {
+    const firstConfirm = window.confirm(
+      "Are you sure you want to begin the matching process?",
+    );
+    if (!firstConfirm) return;
+    const secondConfirm = window.confirm(
+      "This process may take a long time. Do you want to proceed?",
+    );
+    if (!secondConfirm) return;
+    try {
+      const response = await fetch("http://localhost:5000/api/teacher/match", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        console.log("Matching process initiated successfully");
+      } else {
+        console.error("Failed to start matching process");
+      }
+    } catch (error) {
+      console.error("Error during fetching:", error);
+    }
+  };
+
   return (
     <div class="container">
       {error && (
@@ -220,6 +252,17 @@ const ITPSummary = () => {
         onFetch={handleFetchInfo}
         onSubmit={handleEdit}
       />
+
+      <div className="container">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleBeginMatching}
+          style={{ marginTop: "20px" }}
+        >
+          Begin Matching Process
+        </Button>
+      </div>
     </div>
   );
 };

@@ -12,6 +12,7 @@ import styles from "../../styles/Teacher/ITP-Prism.module.css";
 import EditDrawer from "../../components/Teacher/StudentForm";
 import { fetchStudent, updateStudent, addStudent } from "../../api/Student";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
+import UploadStudentBulkPopUp from "../../components/Teacher/UploadStudentBulkPopUp";
 
 const ViewAllStudents = () => {
   useAdminAuthCheck(true);
@@ -24,6 +25,41 @@ const ViewAllStudents = () => {
   const [students, setStudents] = useState([]);
   const [search, setSearch] = useState("");
   const [isEditDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [isUploadExcelOpen, setIsUploadExcelOpen] = useState(false);
+
+  const handleOpenPopup = () => {
+    setIsUploadExcelOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsUploadExcelOpen(false);
+  };
+
+  const handleSubmitStudents = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    console.log("File to be sent:", file.name, file.size);
+    console.log(formData);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/teacher/bulkAddStudent",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Success:", result);
+      } else {
+        console.error("Server responded with: ", response.status);
+      }
+    } catch (error) {
+      console.error("Error submitting form: ", error);
+    }
+  };
 
   const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     [`& .${gridClasses.row}.even`]: {
@@ -59,13 +95,6 @@ const ViewAllStudents = () => {
   }));
 
   useEffect(() => {
-    // Fetch data from the backend when the component mounts
-    // fetch('http://localhost:5000/api/teacher/getAllStudents')
-    //   .then((response) => console.log(response.json))
-    //   .then((data) => setData(data))
-    //   .catch((error) => console.error('Error fetching data:', error));
-
-    // console.log(data);
     async function fetchData() {
       setIsFetching(true);
       setError();
@@ -153,7 +182,6 @@ const ViewAllStudents = () => {
   ];
 
   const displayEditForm = (data) => {
-    console.log(data);
     setEditData(data);
     setEditDrawerOpen(true);
   };
@@ -188,8 +216,10 @@ const ViewAllStudents = () => {
   //     handleFetchInfo();
   //   }
   // };
-  
+
   const updateStudentData = async (data) => {
+    console.log("=============");
+    console.log(data);
     try {
       await updateStudent({
         StudentID: data.StudentId,
@@ -239,13 +269,26 @@ const ViewAllStudents = () => {
           />
 
           {isEditDrawerOpen && (
-            <EditDrawer data={editData} onClose={closeEditDrawer} onSubmit={updateStudentData}/>
+            <EditDrawer
+              data={editData}
+              onClose={closeEditDrawer}
+              onSubmit={updateStudentData}
+            />
           )}
 
           <div>
-            <Button variant="outlined" startIcon={<AddIcon />}>
-              Add
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={handleOpenPopup}
+            >
+              Bulk Add
             </Button>
+            <UploadStudentBulkPopUp
+              open={isUploadExcelOpen}
+              onClose={handleClosePopup}
+              onSubmit={handleSubmitStudents}
+            />
           </div>
         </div>
       </div>

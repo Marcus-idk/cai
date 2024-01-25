@@ -24,7 +24,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import Error from "../../components/error/Error";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
-
+import UploadITPPopUp from "../../components/Teacher/UploadITPPopUp";
 const ITP = () => {
   useAdminAuthCheck(true);
   //HOOKS
@@ -40,11 +40,43 @@ const ITP = () => {
   const [isDeleteDialog, setIsDeleteDialog] = useState(false);
   const [editData, setEditData] = useState({});
   const [deleteData, setDeleteData] = useState(""); //id only
-
+  
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [dataGridHeight, setDataGridHeight] = useState(
     calculateDynamicHeight(),
   );
 
+    const handleOpenUpload = () => {
+      setIsUploadOpen(true);
+    };
+  
+    const handleCloseUpload = () => {
+      setIsUploadOpen(false);
+    };
+  
+    const handleUploadSubmit = (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+    
+      fetch('http://localhost:5000/api/teacher/addITPPDF', {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => {
+        console.log("Response status:", response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log("Response data:", data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    
+      setIsUploadOpen(false);
+    };
+    
+    
   useEffect(() => {
     const fetchData = async () => {
       setIsFetching(true);
@@ -215,7 +247,7 @@ const ITP = () => {
 
   const handleEdit = async (data) => {
     try {
-      let fetchedData = await updateITP(data);
+      await updateITP(data);
       toast.success(`Successfully edited job`);
     } catch (error) {
       toast.error(error.message);
@@ -403,6 +435,13 @@ const ITP = () => {
         onSubmit={handleDelete}
       />
       <ToastContainer />
+      <button onClick={handleOpenUpload}>Upload ITP Documents</button>
+
+      <UploadITPPopUp
+        open={isUploadOpen}
+        onClose={handleCloseUpload}
+        onSubmit={handleUploadSubmit}
+      />
     </div>
   );
 };

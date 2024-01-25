@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const teacherController = require("../../controllers/teacherController");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 router.get("/getAllITP", teacherController.getAllITP);
 //gets all for summary table
@@ -35,20 +37,24 @@ router.put("/prism/:id", teacherController.updatePRISM);
 router.put("/updateITP/:id", teacherController.updateITP);
 //Uses opportunityID to update
 
-router.put('/updateStudent',teacherController.updateStudent);
+router.put("/updateStudent", teacherController.updateStudent);
 //Uses StudentID to update
 
 router.post("/addITP", teacherController.addITP);
 //Adds ITP
 
+router.post("/addITPPDF", upload.single('file'), teacherController.addITPPDF);
+//Adds ITP via PDF
+
 router.post("/prism", teacherController.addPRISM);
 //adds PRISM
 
-router.post("/addStudent", teacherController.addStudent);
-//adds Student
-
-router.post("/:id/Assign", teacherController.Assign);
-//adds studentid(to specify in route) to Assign table with opportunity
+router.post(
+  "/bulkAddStudent",
+  upload.single("file"),
+  teacherController.bulkInsertStudents,
+);
+//bulk adds Students
 
 router.put("/:id/EditAssign", teacherController.EditAssign);
 
@@ -58,5 +64,7 @@ router.delete("UnAssign/:id", teacherController.UnAssign);
 router.delete("/itp/:id", teacherController.deleteITP);
 
 router.delete("/prism/:id", teacherController.deletePRISM);
+
+router.post("/match", teacherController.beginMatching);
 
 module.exports = router;

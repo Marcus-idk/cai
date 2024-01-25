@@ -1,6 +1,10 @@
 const teacherServices = require("../services/teacher");
-const xlsx = require('xlsx');
-
+const xlsx = require("xlsx");
+const unzipper = require('unzipper');
+const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
+const { Console } = require("console");
 async function getAllITP(req, res) {
   try {
     const result = await teacherServices.getAllITP();
@@ -62,17 +66,27 @@ async function getStudent(req, res) {
   }
 }
 
-async function addStudent(req, res) {
+async function bulkInsertStudents(req, res) {
   try {
-    const { id, name, resume, spec, gpa } = req.body;
-    const result = await teacherServices.addStudent(
-      id,
-      name,
-      resume,
-      spec,
-      gpa,
-    );
-    res.status(200).json(result);
+    const workbook = xlsx.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+
+    const jsonData = xlsx.utils.sheet_to_json(worksheet);
+
+    const processedData = jsonData.map((row) => ({
+      adminNo: row["AdminNo"],
+      studentName: row["Student Name"],
+      gpa: row["GPA"],
+      specialization: row["Specialization"],
+      password: row["Password"].toString(),
+    }));
+
+    await teacherServices.bulkInsertStudentData(processedData);
+
+    res
+      .status(200)
+      .json({ message: "Data processed and inserted successfully" });
   } catch (err) {
     console.log("Error", err);
     res.status(500).send(err.message);
@@ -82,7 +96,7 @@ async function addStudent(req, res) {
 async function updateStudent(req, res) {
   try {
     const { StudentID, FullName, spec, gpa } = req.body;
-    
+    console.log(StudentID, FullName, spec, gpa);
     const result = await teacherServices.UpdateStudent(
       StudentID,
       FullName,
@@ -306,24 +320,137 @@ async function addITP(req, res) {
   }
 }
 
+function callPythonJobParser(pdfPath) {
+  return new Promise((resolve, reject) => {
+    const scriptPath = path.join(__dirname, "parseJobPDF/main.py");
+
+    const args = [scriptPath, pdfPath];
+
+    const pythonProcess = spawn("python", args);
+
+    let outputData = "";
+
+    pythonProcess.stdout.on("data", (data) => {
+      outputData += data.toString();
+    });
+
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`Python script error: ${data.toString()}`);
+      reject(new Error(data.toString()));
+    });
+
+    pythonProcess.on("close", (code) => {
+      console.log(`Python script finished with code ${code}`);
+      if (code === 0) {
+        try {
+          console.log(outputData);
+          const result = JSON.parse(outputData);
+
+          if (!result) {
+            reject(new Error("Failed to parse data from PDF"));
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      } else {
+        reject(new Error(`Python script exited with code ${code}`));
+      }
+    });
+  });
+}
+
+async function addITPPDF(req, res) {
+  try {
+      if (!req.file) {
+          return res.status(400).json({ error: "No file uploaded" });
+      }
+
+      const zipFilePath = req.file.path;
+
+      await fs.createReadStream(zipFilePath)
+          .pipe(unzipper.Extract({ path: 'extracted' }))
+          .promise();
+
+      const extractedDir = 'extracted';
+      const items = fs.readdirSync(extractedDir, { withFileTypes: true });
+
+      let companies = [];
+
+      for (const item of items) {
+          const subDirPath = path.join(extractedDir, item.name);
+          const subDirFiles = fs.readdirSync(subDirPath);
+
+          for (const subFile of subDirFiles) {
+              if (subFile.endsWith('.pdf')) {
+                  const filePath = path.join(subDirPath, subFile);
+                  try {
+                      const result = await callPythonJobParser(filePath);
+
+                      const companyData = {
+                          companyName: result.company_info.CompanyName,
+                          jobs: result.job_info.map(job => ({
+                              jobName: job.JobName,
+                              jobDetails: job.JobDetails,
+                              intendedLearningOutcomes: job.IntendedLearningOutcomes,
+                              preferredSkillSet: job.PreferredSkillSet
+                          }))
+                      };
+                      companies.push(companyData);
+
+                      fs.unlinkSync(filePath);
+                  } catch (error) {
+                      console.error(`Error processing ${subFile}:`, error);
+                  }
+              }
+          }
+      }
+
+      for (const company of companies) {
+          await insertCompanyAndJobs(company);
+      }
+
+      fs.unlinkSync(zipFilePath);
+
+      res.status(200).json({ message: "ITP documents processed successfully", companies });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+async function insertCompanyAndJobs(company) {
+  try {
+      const opportunityId = await teacherServices.insertIntoOpportunities({
+          Type: 'ITP',
+          StartDate: '',
+          EndDate: '',
+          Slots: company.jobs.length,
+          Specialisation: '',
+          TeacherID: '',
+          CitizenType: 'All'
+      });
+
+      for (const job of company.jobs) {
+          await teacherServices.insertIntoITP({
+              OpportunityID: opportunityId,
+              Company: company.companyName,
+              JobRole: job.jobName || '',
+              Description: job.jobDetails || ''
+          });
+      }
+  } catch (error) {
+      console.error('Error inserting company and job data:', error);
+      throw error;
+  }
+}
+
 async function getSlots(req, res) {
   try {
     const id = req.params.id;
 
     const result = await teacherServices.getSlots(id);
-    res.status(200).json(result);
-  } catch (err) {
-    console.log("Error", err);
-    res.status(500).send(err.message);
-  }
-}
-
-// wrong
-async function Assign(req, res) {
-  try {
-    const id = req.params.id;
-    const { oppId, comments } = req.body;
-    const result = await teacherServices.Assign(id, oppId, comments);
     res.status(200).json(result);
   } catch (err) {
     console.log("Error", err);
@@ -391,27 +518,13 @@ async function deletePRISM(req, res) {
   }
 }
 
-async function bulkInsertStudents(req, res) {
+async function beginMatching(req, res) {
   try {
-    const workbook = xlsx.readFile(req.file.path);
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-
-    const jsonData = xlsx.utils.sheet_to_json(worksheet);
-
-    const processedData = jsonData.map(row => ({
-      adminNo: row.AdminNo,
-      studentName: row['Student Name'],
-      gpa: row.GPA,
-      specialization: row.Specialization
-    }));
-
-   await teacherServices.bulkInsertStudentsData(processedData);
-
-    res.status(200).json({ message: "Data processed and inserted successfully" });
-  } catch (err) {
-    console.log("Error", err);
-    res.status(500).send(err.message);
+    const result = await teacherServices.beginMatching();
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
@@ -422,18 +535,19 @@ module.exports = {
   AllPRISMSummary,
   getAllStudents,
   getStudent,
-  addStudent,
+  bulkInsertStudents,
   updateStudent,
   getITPTable,
   getPRISMTable,
   updatePRISM,
   updateITP,
   addITP,
+  addITPPDF,
   addPRISM,
   getSlots,
-  Assign,
   EditAssign,
   UnAssign,
   deleteITP,
   deletePRISM,
+  beginMatching,
 };

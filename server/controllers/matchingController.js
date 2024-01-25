@@ -1,6 +1,5 @@
 const { spawn } = require("child_process");
 const path = require("path");
-const matchingService = require("../services/matchingService");
 
 function callPythonScript(students, internships) {
   return new Promise((resolve, reject) => {
@@ -47,10 +46,6 @@ async function handleMatchingAndUpdate(req, res) {
     for (const [studentId, opportunityId] of Object.entries(result)) {
       await matchingService.assignStudent(opportunityId, studentId);
     }
-
-    res
-      .status(200)
-      .json({ message: "Matching and database update successful." });
   } catch (error) {
     console.us(500).send(error.message);
   }

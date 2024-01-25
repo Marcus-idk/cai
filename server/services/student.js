@@ -1,37 +1,5 @@
 const dbConfig = require("../config/dbConfig");
 
-async function UpdateStudent(
-  id,
-  name,
-  resume,
-  gpa,
-  interest,
-  Framework,
-  ProjRank,
-) {
-  const connection = await dbConfig.connectDB();
-  const result = await connection.query(
-    "EXEC UpdateStudent(" +
-      id +
-      "," +
-      name +
-      "," +
-      resume +
-      "," +
-      gpa +
-      "," +
-      interest +
-      "," +
-      Framework +
-      "," +
-      ProjRank +
-      "," +
-      ")",
-  );
-  connection.close();
-  return result;
-}
-
 async function updateStudentProjectRankings(studentID, projectRankings) {
   try {
     const connection = await dbConfig.connectDB();
@@ -104,7 +72,6 @@ async function updateStudentTagAssociations(studentID, tagIDs) {
 }
 
 module.exports = {
-  UpdateStudent,
   updateStudentProjectRankings,
   storeResumePath,
   ensureTagsExist,

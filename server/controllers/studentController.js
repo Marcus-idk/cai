@@ -13,22 +13,6 @@ async function updateStudent(req, res) {
   }
 }
 
-function storeResumeFile(fileBuffer, originalFilename) {
-  return new Promise((resolve, reject) => {
-    const uniqueFilename = `${uuidv4()}${path.extname(originalFilename)}`;
-
-    const storagePath = path.join(__dirname, "..", "resumes", uniqueFilename);
-
-    fs.writeFile(storagePath, fileBuffer, (err) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(storagePath);
-      }
-    });
-  });
-}
-
 function callPythonScript(functionName, text, pdfPath) {
   return new Promise((resolve, reject) => {
     // path to python script
@@ -46,7 +30,6 @@ function callPythonScript(functionName, text, pdfPath) {
 
     // listens to when python outputs data
     pythonProcess.stdout.on("data", (data) => {
-      console.log("data:" + data);
       outputData += data.toString();
     });
 
@@ -95,19 +78,8 @@ async function updateStudentData(studentID, projectRankings, tags) {
 async function handleSubmitForm(req, res) {
   try {
     const resume = req.file;
-
-    if (resume) {
-      const storagePath = await storeResumeFile(
-        resume.buffer,
-        resume.originalname,
-      );
-
-      const studentID = "212877z"; // Replace with actual student ID
-      await storeResumePath(studentID, storagePath);
-
-      console.log("Resume saved and path updated in database successfully.");
-    }
-
+    console.log(resume);
+    // change file name to original name, replace upload if alr exists
     const { codingLanguages, projectInterests, frameworks, interests } =
       JSON.parse(req.body.data);
 
@@ -127,7 +99,6 @@ async function handleSubmitForm(req, res) {
       }
     }
     languagesAndFrameworks = languagesAndFrameworks.join(", ");
-    console.log("Languages and Frameworks:", languagesAndFrameworks);
 
     let interestsString = interests;
     // sort by rank
@@ -141,7 +112,6 @@ async function handleSubmitForm(req, res) {
       interestsString,
       ...sortedAndFormattedProjectInterests,
     ].join(", ");
-    console.log("Combined Interests:", combinedInterests);
 
     const languagesAndFrameworksTags = await callPythonScript(
       "processTagsForLangsAndFrameworks",
@@ -155,9 +125,10 @@ async function handleSubmitForm(req, res) {
     );
 
     tags = languagesAndFrameworksTags.concat(companyInterestsTags);
-    console.log("Project Rankings:", sortedAndFormattedProjectInterests);
 
     let studentID = "212877z";
+    console.log("final: " + sortedAndFormattedProjectInterests);
+    console.log(tags);
     updateStudentData(studentID, sortedAndFormattedProjectInterests, tags);
   } catch (err) {
     console.log("Error in handleSubmitForm:", err);

@@ -108,8 +108,8 @@ function StudentForm({ data, onClose, onSubmit }) {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="gpa"
-                  name="GPA"
+                  label="GPA"
+                  name="gpa"
                   size="small"
                   value={input.gpa}
                   onChange={handleInputChange}
@@ -183,7 +183,9 @@ function StudentForm({ data, onClose, onSubmit }) {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit}
-              > Edit
+              >
+                {" "}
+                Edit
               </Button>
             </Grid>
           </Grid>
