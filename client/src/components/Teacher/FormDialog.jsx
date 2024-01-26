@@ -26,6 +26,7 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
     slots: 0,
     type: "",
     description: "",
+    citizenship: "",
   });
   useEffect(() => {
     const formattedStartDate = data.startDate
@@ -48,6 +49,10 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
       type: data.type || "",
       description: data.description || "",
     });
+    setInput((prevState) => ({
+      ...prevState,
+      citizenship: data.citizenship || "All",
+    }));
   }, [data]);
 
   const handleInputChange = (e) => {
@@ -61,46 +66,6 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
   const handleSubmit = async () => {
     await onSubmit(input);
     onClose();
-    // if (title === "Add") {
-    //   try {
-    //     let fetchedData = await postITPJobs(input);
-    //     let { error, status } = fetchedData;
-
-    //     if (error) {
-    //       console.log(error);
-    //       toast.error(`${status}: ${error}`);
-    //     } else {
-    //       toast.success(`Sucessfully added new job`);
-    //       onFetch();
-    //     }
-    //   } catch (error) {
-    //     toast.error(error);
-    //     console.error(error);
-    //   } finally {
-    //     onClose();
-    //   }
-    // }
-    // if (title === "Edit") {
-    //   try {
-    //     let fetchedData = await updateITPJobs(input);
-    //     let { error, status } = fetchedData;
-    //     console.log(fetchedData);
-    //     if (error) {
-    //       console.log(error);
-    //       toast.error(`${status}: ${error}`);
-    //     } else {
-    //       toast.success(
-    //         `Sucessfully edited job ${fetchedData[0].OpportunityID}`
-    //       );
-    //       onFetch();
-    //     }
-    //   } catch (error) {
-    //     toast.error("An error occurred");
-    //     console.error(error);
-    //   } finally {
-    //     onClose();
-    //   }
-    // }
   };
 
   return (
@@ -161,6 +126,23 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
                     value={input.specialisation}
                     onChange={handleInputChange}
                   />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    select
+                    fullWidth
+                    label="Citizenship"
+                    name="citizenship"
+                    size="small"
+                    value={input.citizenship}
+                    onChange={handleInputChange}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option value="Singaporean/PR">Singaporean/PR</option>
+                    <option value="All">All</option>
+                  </TextField>
                 </Grid>
               </>
             )}

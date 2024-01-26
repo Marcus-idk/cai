@@ -14,6 +14,7 @@ import { formatDateToDDMMYY } from "../../utils/formatTime";
 const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
   const [detailsToggle, setDetailsToggle] = useState(false);
 
+  
   const handleDetailsToggle = () => {
     setDetailsToggle((prevState) => !prevState);
   };
@@ -35,20 +36,6 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
       ...data,
     });
   };
-
-  // const handleEdit = () => {
-  //   // Construct the data object from the props
-  //   const editData = {
-  //     id,
-  //     slots: headerData.value,
-  //     description,
-  //   };
-  //   bodyData.forEach((item) => {
-  //     editData[item.label.toLowerCase()] = item.value;
-  //   });
-  //   onEdit(editData);
-  // };
-
   const handleDelete = () => {
     onDelete(id);
   };
@@ -63,7 +50,6 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
       <div className={styles.card}>
         <div className={styles["header-wrapper"]}>
           <div>
-            {/* <IconSlots className={styles.icon} /> */}
             {headerData.icon}
             <p>{headerData.value}</p>
           </div>
@@ -99,66 +85,8 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
                   ))}
                 </div>
                 <hr />
-                {/* {rowIndex !== groupedBodyData.length - 1 ||
-                (rowIndex === groupedBodyData.length - 1 && pair.length < 2) ? (
-                  <hr />
-                ) : null} */}
               </div>
             ))}
-            {/* <div className={styles["row-wrapper"]}>
-              <div className={styles["col1-wrapper"]}>
-                <IconCompany className={styles.icon} />
-                <div>
-                  <p>Company</p>
-                  <h3>{company}</h3>
-                </div>
-              </div>
-              <div className={styles["col2-wrapper"]}>
-                <IconRole className={styles.icon} />
-                <div>
-                  <p>Role</p>
-                  <h3>{role}</h3>
-                </div>
-              </div>
-            </div>
-            <hr />
-            <div className={styles["row-wrapper"]}>
-              <div className={styles["col1-wrapper"]}>
-                <IconTeacher className={styles.icon} />
-                <div>
-                  <p>Teacher-In-Charge</p>
-                  <h3>{teacher}</h3>
-                </div>
-              </div>
-              <div className={styles["col2-wrapper"]}>
-                <IconSpecialisation className={styles.icon} />
-                <div>
-                  <p>Specialisation</p>
-                  <h3>{specialisation}</h3>
-                </div>
-              </div>
-            </div>
-            <hr />
-            <div className={styles["row-wrapper"]}>
-              <div className={styles["col1-wrapper"]}>
-                <IconPeriod className={styles.icon} />
-                <div>
-                  <p>Period</p>
-                  <h3>
-                    {formatDateToDDMMYY(startDate)}-
-                    {formatDateToDDMMYY(endDate)}
-                  </h3>
-                </div>
-              </div>
-              <div className={styles["col2-wrapper"]}>
-                <IconSlots className={styles.icon} />
-                <div>
-                  <p>Slots</p>
-                  <h3>{slots}</h3>
-                </div>
-              </div>
-            </div>
-            <hr /> */}
             <div className={styles["description-wrapper"]}>
               <IconDescription
                 className={`${styles.icon} + ${styles.infoIcon}`}
@@ -187,6 +115,8 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
             {!detailsToggle ? "More" : "Less"} Details
           </button>
         </div>
+
+        
       </div>
     </div>
   );

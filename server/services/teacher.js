@@ -25,10 +25,15 @@ async function UpdateStudent(StudentID, FullName, Specialisation, GPA) {
     const query = `
     UPDATE S
     SET 
-      U.FullName = '${FullName}',
       S.Specialisation = '${Specialisation}',
       S.GPA = '${GPA}'
-      FROM users U, students S
+    FROM users U, students S
+    WHERE S.StudentID = '${StudentID}' AND U.userid = S.userid;
+
+    UPDATE U
+    SET 
+      U.FullName = '${FullName}'
+    FROM users U, students S
     WHERE S.StudentID = '${StudentID}' AND U.userid = S.userid;
     `;
     const result = await connection.query(query);
@@ -169,7 +174,7 @@ async function AddITP(
     request.input("StartDate", sql.DateTime, new Date(startDate));
     request.input("EndDate", sql.DateTime, new Date(endDate));
     request.input("Slots", sql.Int, slots);
-    request.input("Description", sql.NVarChar(256), description);
+    request.input("Description", sql.NVarChar(MAX), description);
     request.input("Specialisation", sql.VarChar(3), specialisation);
     request.input("Teacher", sql.NVarChar(256), teacher);
     request.input("Company", sql.NVarChar(256), company);
@@ -258,6 +263,7 @@ async function UpdateITP(
   specialisation,
   startDate,
   endDate,
+  citizenship
 ) {
   let connection;
   try {
@@ -268,12 +274,16 @@ async function UpdateITP(
     request.input("StartDate", sql.DateTime, new Date(startDate));
     request.input("EndDate", sql.DateTime, new Date(endDate));
     request.input("Slots", sql.Int, slots);
-    request.input("Description", sql.NVarChar(256), description);
+    request.input("Description", sql.NVarChar(sql.MAX), description);
     request.input("Specialisation", sql.VarChar(3), specialisation);
     request.input("TeacherName", sql.NVarChar(256), teacher);
     request.input("Company", sql.NVarChar(256), company);
     request.input("JobRole", sql.NVarChar(128), role);
+    request.input("CitizenType", sql.NVarChar(256), citizenship);
 
+    console.log("AAAAAA")
+    console.log(citizenship)
+    console.log(request)
     const result = await request.execute("UpdateITP");
     return result;
   } catch (error) {
@@ -332,12 +342,6 @@ async function bulkInsertStudentData(studentData) {
   try {
     for (const student of studentData) {
       let pw = await bcrypt.hash(student.password, 5);
-      // let studentQuery = `
-      //   INSERT INTO Students (StudentID, GPA, Specialisation)
-      //   VALUES ('${student.adminNo}', ${student.gpa}, '${student.specialization}')`;
-      // let userQuery = `
-      //   INSERT INTO Users (FullName, Email, DateRegistered, Deleted, Password)
-      //   VALUES ('${student.studentName}', '${student.adminNo}@mymail.nyp.edu.sg', GETDATE(), 0, '${pw}')`;
       let q = `
         BEGIN TRANSACTION [T1]
         BEGIN TRY
@@ -458,12 +462,12 @@ async function insertIntoOpportunities(opportunityData) {
   try {
     console.log(opportunityData);
 
-    let query = `INSERT INTO Opportunities (Type, Slots, CitizenType) VALUES ('${Opportunities.Type}', '${Opportunities.Slots}', '${Opportunities.CitizenType}')`;
-    
-    console.log("Executing query:", query);
-    await connection.query(query);
+    let query = `INSERT INTO Opportunities (Deleted, Slots, Description, Company, CitizenType) 
+    VALUES (0, '${opportunityData.Slots}', '${opportunityData.Description || ''}', '${opportunityData.Company}', '${opportunityData.CitizenType}')`;
 
-    return { message: "Opportunity inserted successfully" };
+    console.log("Executing query:", query);
+    const result = await connection.query(query);
+    return { message: "Opportunity inserted successfully", opportunityId: result.insertId };
   } catch (err) {
     console.error("Error during database operation", err);
     throw err;
@@ -478,7 +482,7 @@ async function insertIntoITP(itpData) {
   try {
     console.log(itpData);
 
-    let query = `INSERT ITO ITP (OpportunityID, Company, JobRole, Description) VALUES (${itpData.OpportunityID}, '${itpData.Company}', '${itpData.JobRole}', '${itpData.Description}')`;
+    let query = `INSERT INTO ITP (JobRole) VALUES ('${itpData.JobRole}')`;
 
     console.log("Executing query:", query);
     await connection.query(query);

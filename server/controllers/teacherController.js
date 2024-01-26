@@ -80,6 +80,7 @@ async function bulkInsertStudents(req, res) {
       gpa: row["GPA"],
       specialization: row["Specialization"],
       password: row["Password"].toString(),
+      citizenship: row["Citizenship"].toString(),
     }));
 
     await teacherServices.bulkInsertStudentData(processedData);
@@ -195,6 +196,7 @@ async function updateITP(req, res) {
       specialisation,
       startDate,
       endDate,
+      citizenship
     } = req.body;
 
     if (
@@ -206,11 +208,11 @@ async function updateITP(req, res) {
       !teacher ||
       !specialisation ||
       !startDate ||
-      !endDate
+      !endDate ||
+      !citizenship
     ) {
       return res.status(400).json({ error: "Missing required fields" });
     }
-
     const result = await teacherServices.UpdateITP(
       id,
       company,
@@ -221,6 +223,7 @@ async function updateITP(req, res) {
       specialisation,
       startDate,
       endDate,
+      citizenship
     );
 
     res.status(200).json(result);
@@ -408,6 +411,7 @@ async function addITPPDF(req, res) {
       }
 
       for (const company of companies) {
+        console.log(company)
           await insertCompanyAndJobs(company);
       }
 
@@ -422,22 +426,22 @@ async function addITPPDF(req, res) {
 
 async function insertCompanyAndJobs(company) {
   try {
+      // Inserting into the Opportunities table
       const opportunityId = await teacherServices.insertIntoOpportunities({
-          Type: 'ITP',
           StartDate: '',
           EndDate: '',
           Slots: company.jobs.length,
           Specialisation: '',
           TeacherID: '',
-          CitizenType: 'All'
+          Company: company.companyName,
+          CitizenType: 'All',
+          Description: company.jobs.map(job => job.jobDetails).join(' ; ')
       });
 
       for (const job of company.jobs) {
           await teacherServices.insertIntoITP({
               OpportunityID: opportunityId,
-              Company: company.companyName,
-              JobRole: job.jobName || '',
-              Description: job.jobDetails || ''
+              JobRole: job.jobName || ''
           });
       }
   } catch (error) {

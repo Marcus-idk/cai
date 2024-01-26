@@ -38,8 +38,6 @@ const ViewAllStudents = () => {
   const handleSubmitStudents = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    console.log("File to be sent:", file.name, file.size);
-    console.log(formData);
 
     try {
       const response = await fetch(
@@ -143,11 +141,6 @@ const ViewAllStudents = () => {
   const columns = [
     { field: "id", headerName: "Student ID" },
     { field: "FullName", headerName: "Student Name" },
-    { field: "ResumeLink", headerName: "Resume Uploaded" },
-    { field: "Interests", headerName: "Interested Coding Languages" },
-    { field: "Descr", headerName: "Decription" },
-    { field: "Frameworks", headerName: "Frameworks Experienced" },
-    { field: "ProjRank", headerName: "Project Rank" },
     { field: "Specialisation", headerName: "Specialisation" },
     { field: "GPA", headerName: "GPA" },
   ];
@@ -158,10 +151,6 @@ const ViewAllStudents = () => {
       item.StudentID.toLowerCase().includes(search) ||
       item.FullName.toLowerCase().includes(search) ||
       item.ResumeLink.toLowerCase().includes(search) ||
-      item.Interests.toLowerCase().includes(search) ||
-      item.Descr.toLowerCase().includes(search) ||
-      item.Frameworks.toLowerCase().includes(search) ||
-      item.ProjRank.toLowerCase().includes(search) ||
       item.Specialisation.toLowerCase().includes(search) ||
       item.GPA.toLowerCase().includes(search),
   );
@@ -200,22 +189,6 @@ const ViewAllStudents = () => {
         value.toLowerCase().includes(searchText.toLowerCase()),
     ),
   );
-
-  // const submitEdit = async (data) => {
-  //   try {
-  //     let fetchedData = await updateITPSummary(
-  //       editData.StudentID,
-  //       data.StudentID,
-  //       data.id,
-  //     );
-  //   } catch (error) {
-  //     console.log(data);
-  //     console.error(error);
-  //     setError(error.message);
-  //   } finally {
-  //     handleFetchInfo();
-  //   }
-  // };
 
   const updateStudentData = async (data) => {
     console.log("=============");
@@ -256,7 +229,6 @@ const ViewAllStudents = () => {
             disableRowSelectionOnClick
             rows={filteredRows}
             columns={columns.concat(actionColumns)}
-            // columns = {columns}
             initialState={{
               pagination: {
                 paginationModel: { page: 0, pageSize: 10 },

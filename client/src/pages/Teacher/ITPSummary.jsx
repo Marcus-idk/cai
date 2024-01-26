@@ -5,7 +5,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import TextField from "@mui/material/TextField";
 import styles from "../../styles/Teacher/ITP-Prism.module.css";
 import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
+import SearchIcon from "@mui/icons-material/Search";  
 import { fetchITPSummary, updateITPSummary } from "../../api/ITP";
 import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import Edit from "@mui/icons-material/Edit";
@@ -106,7 +106,7 @@ const ITPSummary = () => {
 
   const rows = mappedData.filter(
     (item) =>
-      item.OpportunityID.toLowerCase() ||
+      item.OpportunityID ||
       item.Company.toLowerCase() ||
       item.JobRole.toLowerCase() ||
       item.FullName.toLowerCase() ||

@@ -21,7 +21,8 @@ function StudentForm({ data, onClose, onSubmit }) {
     specialisation: "",
     gpa: "",
   });
-  useEffect(() => {
+  useEffect(() => {  
+    console.log("Data received by StudentForm:", data);
     setInput({
       StudentId: data.StudentID || "",
       FullName: data.FullName || "",
@@ -69,7 +70,7 @@ function StudentForm({ data, onClose, onSubmit }) {
                   label="StudentId"
                   name="StudentId"
                   size="small"
-                  value={input.StudentId}
+                  value={input.StudentID}
                   onChange={handleInputChange}
                   disabled={true}
                 />
@@ -116,61 +117,6 @@ function StudentForm({ data, onClose, onSubmit }) {
                 />
               </Grid>
             </>
-            {/* )} */}
-            {/* {type === "PRISM" && ( */}
-            {/* <>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="Type"
-                    name="type"
-                    size="small"
-                    value={input.type}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="Title"
-                    name="title"
-                    size="small"
-                    value={input.title}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    fullWidth
-                    label="Specialisation"
-                    name="specialisation"
-                    size="small"
-                    value={input.specialisation}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Company"
-                    name="company"
-                    size="small"
-                    value={input.company}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Teacher"
-                    name="teacher"
-                    size="small"
-                    value={input.teacher}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
-              </> */}
-            {/* )} */}
             <Grid item xs={6}></Grid>
             <Grid item xs={3} container justifyContent="flex-end">
               <Button fullWidth variant="outlined" onClick={onClose}>

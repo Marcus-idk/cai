@@ -47,7 +47,7 @@ CREATE TABLE Opportunities (
   EndDate datetime,
   Deleted int, -- 0(not deleted), 1(deleted)
   Slots int,
-  Description nvarchar(256),
+  Description nvarchar(MAX),
   Specialisation varchar(3),
   TeacherID int,
   Company nvarchar(256),

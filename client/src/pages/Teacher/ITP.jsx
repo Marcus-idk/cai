@@ -105,7 +105,7 @@ const ITP = () => {
   const filteredData = mappedData.filter(
     (item) =>
       search === "" ||
-      item.opportunityID.toLowerCase().includes(search) ||
+      item.opportunityID.toString().toLowerCase().includes(search) ||
       item.company.toLowerCase().includes(search) ||
       item.role.toLowerCase().includes(search) ||
       item.teacher.toLowerCase().includes(search) ||

@@ -54,6 +54,7 @@ export async function updateITP({
   endDate,
   slots,
   description,
+  citizenship
 }) {
   const response = await fetch(
     `http://localhost:5000/api/teacher/updateITP/${id}`,
@@ -71,6 +72,7 @@ export async function updateITP({
         endDate,
         slots,
         description,
+        citizenship
       }),
     },
   );
