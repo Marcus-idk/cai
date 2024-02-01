@@ -13,6 +13,7 @@ import EditDrawer from "../../components/Teacher/StudentForm";
 import { fetchStudent, updateStudent, addStudent } from "../../api/Student";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadStudentBulkPopUp from "../../components/Teacher/UploadStudentBulkPopUp";
+import { fetchAPI } from "../../utils/fetchAPI";
 
 const ViewAllStudents = () => {
   useAdminAuthCheck(true);
@@ -40,8 +41,8 @@ const ViewAllStudents = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/teacher/bulkAddStudent",
+      const response = await fetchAPI(
+        "/api/teacher/bulkAddStudent",
         {
           method: "POST",
           body: formData,
@@ -97,8 +98,8 @@ const ViewAllStudents = () => {
       setIsFetching(true);
       setError();
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/teacher/getAllStudents",
+        const response = await fetchAPI(
+          "/api/teacher/getAllStudents",
         );
         const resData = await response.json();
         console.log(resData);

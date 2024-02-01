@@ -1,7 +1,8 @@
 // api.js
+import { fetchAPI } from "../utils/fetchAPI";
 export async function loginUserApi(email, password) {
   try {
-    const response = await fetch("http://localhost:5000/api/login", {
+    const response = await fetchAPI("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

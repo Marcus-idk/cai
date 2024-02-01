@@ -1,6 +1,8 @@
+import { fetchAPI } from "../utils/fetchAPI";
+
 export async function fetchStudent() {
-  const response = await fetch(
-    "http://localhost:5000/api/teacher/getAllStudents",
+  const response = await fetchAPI(
+    "/api/teacher/getAllStudents",
   );
 
   if (!response.ok) {
@@ -12,8 +14,8 @@ export async function fetchStudent() {
 }
 
 export async function updateStudent({ StudentID, FullName, spec, gpa }) {
-  const response = await fetch(
-    `http://localhost:5000/api/teacher/updateStudent`,
+  const response = await fetchAPI(
+    `/api/teacher/updateStudent`,
     {
       method: "PUT",
       headers: {

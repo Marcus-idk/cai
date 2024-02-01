@@ -11,6 +11,7 @@ import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import Edit from "@mui/icons-material/Edit";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import Button from "@mui/material/Button";
+import { fetchAPI } from "../../utils/fetchAPI";
 
 const ITPSummary = () => {
   useAdminAuthCheck(true);
@@ -170,7 +171,7 @@ const ITPSummary = () => {
     );
     if (!secondConfirm) return;
     try {
-      const response = await fetch("http://localhost:5000/api/teacher/match", {
+      const response = await fetchAPI("/api/teacher/match", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

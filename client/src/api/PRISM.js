@@ -1,5 +1,7 @@
+import { fetchAPI } from "../utils/fetchAPI";
+
 export async function fetchPRISM() {
-  const response = await fetch("http://localhost:5000/api/teacher/prism");
+  const response = await fetchAPI("/api/teacher/prism");
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -20,7 +22,7 @@ export async function postPRISM({
   endDate,
   description,
 }) {
-  const response = await fetch("http://localhost:5000/api/teacher/prism", {
+  const response = await fetchAPI("/api/teacher/prism", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -58,8 +60,8 @@ export async function updatePRISM({
   endDate,
   description,
 }) {
-  const response = await fetch(
-    `http://localhost:5000/api/teacher/prism/${id}`,
+  const response = await fetchAPI(
+    `/api/teacher/prism/${id}`,
     {
       method: "PUT",
       headers: {
@@ -88,8 +90,8 @@ export async function updatePRISM({
 }
 
 export async function deletePRISM(id) {
-  const response = await fetch(
-    `http://localhost:5000/api/teacher/prism/${id}`,
+  const response = await fetchAPI(
+    `/api/teacher/prism/${id}`,
     {
       method: "DELETE",
       headers: {
@@ -106,8 +108,8 @@ export async function deletePRISM(id) {
   return resData;
 }
 export async function fetchPRISMSummary() {
-  const response = await fetch(
-    "http://localhost:5000/api/teacher/AllPRISMSummary",
+  const response = await fetchAPI(
+    "/api/teacher/AllPRISMSummary",
   );
 
   if (!response.ok) {
@@ -118,8 +120,8 @@ export async function fetchPRISMSummary() {
   return resData;
 }
 export async function updateITPSummary({ StudentID, id }) {
-  const response = await fetch(
-    `http://localhost:5000/api/teacher/${id}/EditAssign`,
+  const response = await fetchAPI(
+    `/api/teacher/${id}/EditAssign`,
     {
       method: "PUT",
       headers: {

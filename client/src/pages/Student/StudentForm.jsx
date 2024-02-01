@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import styles from "../../styles/Student/StudentForm.module.css";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
+import { fetchAPI } from "../../utils/fetchAPI";
 
 const StudentForm = () => {
   useAdminAuthCheck(false);
@@ -143,8 +144,8 @@ const StudentForm = () => {
 
     try {
       console.log("Sending request to the server");
-      const response = await fetch(
-        "http://localhost:5000/api/user/submit-form",
+      const response = await fetchAPI(
+        "/api/user/submit-form",
         {
           method: "POST",
           body: formData,

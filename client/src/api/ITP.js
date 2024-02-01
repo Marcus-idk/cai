@@ -1,5 +1,7 @@
+import { fetchAPI } from "../utils/fetchAPI";
+
 export async function fetchITP() {
-  const response = await fetch("http://localhost:5000/api/teacher/getAllITP");
+  const response = await fetchAPI("/api/teacher/getAllITP");
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -19,7 +21,7 @@ export async function postITP({
   slots,
   description,
 }) {
-  const response = await fetch("http://localhost:5000/api/teacher/addITP", {
+  const response = await fetchAPI("/api/teacher/addITP", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -56,8 +58,8 @@ export async function updateITP({
   description,
   citizenship
 }) {
-  const response = await fetch(
-    `http://localhost:5000/api/teacher/updateITP/${id}`,
+  const response = await fetchAPI(
+    `/api/teacher/updateITP/${id}`,
     {
       method: "PUT",
       headers: {
@@ -86,7 +88,7 @@ export async function updateITP({
 }
 
 export async function deleteITP(id) {
-  const response = await fetch(`http://localhost:5000/api/teacher/itp/${id}`, {
+  const response = await fetchAPI(`/api/teacher/itp/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -101,8 +103,8 @@ export async function deleteITP(id) {
   return resData;
 }
 export async function fetchITPSummary() {
-  const response = await fetch(
-    "http://localhost:5000/api/teacher/AllITPSummary",
+  const response = await fetchAPI(
+    "/api/teacher/AllITPSummary",
   );
 
   if (!response.ok) {
@@ -114,8 +116,8 @@ export async function fetchITPSummary() {
 }
 
 export async function updateITPSummary(oldID, newID, opportunityID) {
-  const response = await fetch(
-    `http://localhost:5000/api/teacher/${opportunityID}/EditAssign`,
+  const response = await fetchAPI(
+    `/api/teacher/${opportunityID}/EditAssign`,
     {
       method: "PUT",
       headers: {

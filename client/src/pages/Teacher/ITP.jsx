@@ -26,7 +26,7 @@ import Error from "../../components/error/Error";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadITPPopUp from "../../components/Teacher/UploadITPPopUp";
 import IconCitizenship from '@mui/icons-material/Public';
-
+import { fetchAPI } from "../../utils/fetchAPI";
 const ITP = () => {
   useAdminAuthCheck(true);
   //HOOKS
@@ -60,7 +60,7 @@ const ITP = () => {
       const formData = new FormData();
       formData.append('file', file);
     
-      fetch('http://localhost:5000/api/teacher/addITPPDF', {
+      fetchAPI('/api/teacher/addITPPDF', {
         method: 'POST',
         body: formData,
       })
@@ -447,7 +447,7 @@ const ITP = () => {
         onSubmit={handleDelete}
       />
       <ToastContainer />
-      <button onClick={handleOpenUpload}>Upload ITP Documents</button>
+      <button type="button" class="btn btn-primary" onClick={handleOpenUpload}>Upload ITP Documents</button>
 
       <UploadITPPopUp
         open={isUploadOpen}
