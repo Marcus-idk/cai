@@ -14,7 +14,6 @@ import { formatDateToDDMMYY } from "../../utils/formatTime";
 const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
   const [detailsToggle, setDetailsToggle] = useState(false);
 
-  
   const handleDetailsToggle = () => {
     setDetailsToggle((prevState) => !prevState);
   };
@@ -29,6 +28,7 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
     startDate,
     endDate,
     description,
+    citizenship,
   } = data;
 
   const handleEdit = () => {
@@ -51,10 +51,10 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
         <div className={styles["header-wrapper"]}>
           <div>
             {headerData.icon}
-            <p>{headerData.value}</p>
+            <p style={{ margin: "0 0 0 10px" }}>{headerData.value}</p>
           </div>
           <div>
-            <h2>{id}</h2>
+            <h2>{"O " + id}</h2>
           </div>
           <div className={styles["header-right-wrapper"]}>
             <IconEdit className={styles.editIcon} onClick={handleEdit} />
@@ -91,7 +91,7 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
               <IconDescription
                 className={`${styles.icon} + ${styles.infoIcon}`}
               />
-              <p>{description}</p>
+              <p style={{ margin: 0 }}>{description}</p>
             </div>
           </>
         ) : (
@@ -115,8 +115,6 @@ const Card = ({ onEdit, onDelete, data, headerData, bodyData }) => {
             {!detailsToggle ? "More" : "Less"} Details
           </button>
         </div>
-
-        
       </div>
     </div>
   );

@@ -82,7 +82,9 @@ async function bulkInsertStudents(req, res) {
       password: row["Password"].toString(),
       citizenship: row["Citizenship"].toString(),
     }));
-
+    
+    console.log("PROCESSED")
+    console.log(processedData)
     await teacherServices.bulkInsertStudentData(processedData);
 
     res
@@ -397,7 +399,8 @@ async function addITPPDF(req, res) {
                               jobName: job.JobName,
                               jobDetails: job.JobDetails,
                               intendedLearningOutcomes: job.IntendedLearningOutcomes,
-                              preferredSkillSet: job.PreferredSkillSet
+                              preferredSkillSet: job.PreferredSkillSet,
+                              slots: job.Slots
                           }))
                       };
                       companies.push(companyData);
@@ -411,8 +414,7 @@ async function addITPPDF(req, res) {
       }
 
       for (const company of companies) {
-        console.log(company)
-          await insertCompanyAndJobs(company);
+        await insertCompanyAndJobs(company);
       }
 
       fs.unlinkSync(zipFilePath);
@@ -426,24 +428,17 @@ async function addITPPDF(req, res) {
 
 async function insertCompanyAndJobs(company) {
   try {
-      // Inserting into the Opportunities table
-      const opportunityId = await teacherServices.insertIntoOpportunities({
-          StartDate: '',
-          EndDate: '',
-          Slots: company.jobs.length,
-          Specialisation: '',
-          TeacherID: '',
-          Company: company.companyName,
-          CitizenType: 'All',
-          Description: company.jobs.map(job => job.jobDetails).join(' ; ')
-      });
+    console.log(company)
 
-      for (const job of company.jobs) {
-          await teacherServices.insertIntoITP({
-              OpportunityID: opportunityId,
-              JobRole: job.jobName || ''
-          });
-      }
+    for (const job of company.jobs) {
+        await teacherServices.insertITP({
+            JobRole: job.jobName || '',
+            Slots: job.slots,
+            Company: company.companyName,
+            CitizenType: 'All',
+            Description: job.jobDetails
+        });
+    }
   } catch (error) {
       console.error('Error inserting company and job data:', error);
       throw error;
@@ -471,18 +466,6 @@ async function EditAssign(req, res) {
       oldID,
       opportunityID,
     );
-    res.status(200).json(result);
-  } catch (err) {
-    console.log("Error", err);
-    res.status(500).send(err.message);
-  }
-}
-
-// wrong
-async function UnAssign(req, res) {
-  try {
-    const id = req.params.id;
-    const result = await teacherServices.UnAssign(id); //Uses student Id and deletes row from student table
     res.status(200).json(result);
   } catch (err) {
     console.log("Error", err);
@@ -550,7 +533,6 @@ module.exports = {
   addPRISM,
   getSlots,
   EditAssign,
-  UnAssign,
   deleteITP,
   deletePRISM,
   beginMatching,

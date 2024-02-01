@@ -58,9 +58,6 @@ router.post(
 
 router.put("/:id/EditAssign", teacherController.EditAssign);
 
-router.delete("UnAssign/:id", teacherController.UnAssign);
-//deletes row based on student id
-
 router.delete("/itp/:id", teacherController.deleteITP);
 
 router.delete("/prism/:id", teacherController.deletePRISM);

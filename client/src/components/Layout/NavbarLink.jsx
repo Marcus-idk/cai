@@ -6,7 +6,7 @@ const NavbarLink = (props) => {
     <li>
       <a
         href={linkPath}
-        class={
+        className={
           "nav-link px-2" + (currPath === linkPath ? " link-secondary" : "")
         }
       >

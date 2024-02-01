@@ -113,7 +113,7 @@ const ImageMarked = styled("span")(({ theme }) => ({
 const TeacherLanding = () => {
   useAdminAuthCheck(true);
   return (
-    <div class="container">
+    <div className="container">
       <div className={styles.teacherContainer}>
         <h2>Welcome to ITP/PRISM Interest Mapping Website</h2>
         <Box className={styles["Box"]}>

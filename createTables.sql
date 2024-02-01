@@ -105,7 +105,8 @@ VALUES
 ('hashed_password_1', 'teacher1@example.com', '2024-01-01', 'Teacher One', 0),
 ('hashed_password_2', 'student1@example.com', '2024-01-02', 'Student One', 0),
 ('hashed_password_3', 'teacher2@example.com', '2024-01-03', 'Teacher Two', 0),
-('hashed_password_4', 'student2@example.com', '2024-01-04', 'Student Two', 0);
+('hashed_password_4', 'student2@example.com', '2024-01-04', 'Student Two', 0),
+('hashed_password_5', 'student3@example.com', '2024-01-04', 'Student Three', 0);
 
 -- Inserting sample data into Teachers table
 INSERT INTO Teachers (UserID, Specialization)
@@ -117,13 +118,14 @@ VALUES
 INSERT INTO Students (StudentID, UserID, ResumeLink, Specialisation, Citizenship, GPA, ProjRank)
 VALUES
 ('S100001', 2, 'link_to_resume_1', 'CS', 'Singaporean', 3.5, '1,2,3'),
-('S100002', 4, 'link_to_resume_2', 'ENG', 'PR', 3.8, '4,3,2');
+('S100002', 4, 'link_to_resume_2', 'ENG', 'PR', 3.8, '3,2,1'),
+('S100003', 5, 'link_to_resume_2', 'ENG', 'Others', 3.8, '3,2,1');
 
 -- Inserting sample data into Opportunities table
 INSERT INTO Opportunities (StartDate, EndDate, Deleted, Slots, Description, Specialisation, TeacherID, Company, CitizenType)
 VALUES
-('2024-06-01', '2024-12-31', 0, 5, 'Software Development Internship', 'CS', 1, 'Tech Corp', 'All'),
-('2024-07-01', '2024-11-30', 0, 3, 'Data Analysis Project', 'DA', 1, 'Data Inc', 'Singaporean/PR'),
+('2024-06-01', '2024-12-31', 0, 1, 'Software Development Internship', 'CS', 1, 'Tech Corp', 'All'),
+('2024-07-01', '2024-11-30', 0, 1, 'Data Analysis Project', 'DA', 1, 'Data Inc', 'Singaporean/PR'),
 ('2024-05-15', '2024-10-15', 0, 4, 'Network Security Internship', 'IT', 3, 'SecureNet', 'All');
 
 -- Inserting sample data into ITP table
@@ -152,8 +154,13 @@ VALUES
 (2, 'S100002', 2),
 (3, 'S100001', 3);
 
+INSERT INTO TagKey (TagID, StudentID)
+VALUES
+(2, 'S100003'),
+(1, 'S100003');
+
 -- Inserting sample data into Assigned table
 INSERT INTO Assigned (OpportunityID, StudentID, Comments)
 VALUES
-(1, 'S100001', 'Assigned for summer internship'),
-(2, 'S100002', 'Assigned for data project')
+-- (2, 'S100001', 'Assigned for summer internship'),
+-- (1, 'S100002', 'Assigned for data project')

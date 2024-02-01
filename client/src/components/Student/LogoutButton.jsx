@@ -14,7 +14,7 @@ const LogoutButton = () => {
   return (
     <button
       type="button"
-      class="btn btn-outline-primary me-2"
+      className="btn btn-outline-primary me-2"
       onClick={handleLogout}
     >
       Sign Out

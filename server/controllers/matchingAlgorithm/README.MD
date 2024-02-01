@@ -3,7 +3,7 @@
 Run the script from the command line, passing the student data and internship data as JSON strings. The format for the command is:
 
 ```bash
-python match_students.py '[student_data_json]' - '[internship_data_json]'
+python match_students.py '[student_data_json]' '[internship_data_json]'
 ```
 
 ### Data Format
@@ -26,5 +26,5 @@ python match_students.py '[student_data_json]' - '[internship_data_json]'
 ### Example Command
 
 ```bash
-python match_students.py '[{"admin_number":"S0000001","specialization":"Software","citizenship":"Singaporean","gpa":3.8,"tags":["Java", "Web Development"]}]' - '[{"opportunity_id":"INT001","job_role":"Software Developer","tags":["Java", "System Architecture"],"citizen_type":"Singaporean/PR","vacancies":2}]'
+python match_students.py '[{"admin_number":"S0000001","specialization":"Software","citizenship":"Singaporean","gpa":3.8,"tags":["Java", "Web Development"]}]'/////'[{"opportunity_id":"INT001","job_role":"Software Developer","tags":["Java", "System Architecture"],"citizen_type":"Singaporean/PR","vacancies":2}]'
 ```

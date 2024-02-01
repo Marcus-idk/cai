@@ -51,7 +51,7 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
     });
     setInput((prevState) => ({
       ...prevState,
-      citizenship: data.citizenship || "All",
+      citizenship: data.citizentype || "All",
     }));
   }, [data]);
 

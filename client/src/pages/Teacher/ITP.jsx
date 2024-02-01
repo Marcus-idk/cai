@@ -25,6 +25,8 @@ import { ToastContainer, toast } from "react-toastify";
 import Error from "../../components/error/Error";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadITPPopUp from "../../components/Teacher/UploadITPPopUp";
+import IconCitizenship from '@mui/icons-material/Public';
+
 const ITP = () => {
   useAdminAuthCheck(true);
   //HOOKS
@@ -84,6 +86,7 @@ const ITP = () => {
       try {
         const fetchedData = await fetchITP();
         let { recordset } = fetchedData;
+        console.log(recordset)
         setJobs(recordset);
       } catch (error) {
         setError(error);
@@ -96,10 +99,10 @@ const ITP = () => {
 
   const mappedData = jobs.map((item) => ({
     ...item,
-    id: item.opportunityID, //Required by datagrid
+    id: item.opportunityID,
     period: `${formatDateToShortNumeric(
       item.startDate,
-    )} - ${formatDateToShortNumeric(item.endDate)}`, //Datagrid use
+    )} - ${formatDateToShortNumeric(item.endDate)}`,
   }));
 
   const filteredData = mappedData.filter(
@@ -369,6 +372,15 @@ const ITP = () => {
                               ),
                               label: "Specialisation",
                               value: item.specialisation,
+                            },
+                            {
+                              icon: (
+                                <IconCitizenship
+                                  sx={{ fontSize: 32, color: "#9699C0" }}
+                                />
+                              ),
+                              label: "Citizenship",
+                              value: item.citizentype,
                             },
                             {
                               icon: (

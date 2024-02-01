@@ -2,7 +2,7 @@ const dbConfig = require("../config/dbConfig");
 const sql = require("mssql");
 const bcrypt = require("bcrypt");
 const {
-  handleMatchingAndUpdate,
+  getMatching,
 } = require("../controllers/matchingController");
 
 async function getAllStudents() {
@@ -174,7 +174,7 @@ async function AddITP(
     request.input("StartDate", sql.DateTime, new Date(startDate));
     request.input("EndDate", sql.DateTime, new Date(endDate));
     request.input("Slots", sql.Int, slots);
-    request.input("Description", sql.NVarChar(MAX), description);
+    request.input("Description", sql.NVarChar(sql.MAX), description);
     request.input("Specialisation", sql.VarChar(3), specialisation);
     request.input("Teacher", sql.NVarChar(256), teacher);
     request.input("Company", sql.NVarChar(256), company);
@@ -348,8 +348,8 @@ async function bulkInsertStudentData(studentData) {
             INSERT INTO Users (Password, Email, DateRegistered, FullName, Deleted)
             VALUES ('${pw}', '${student.adminNo}@mymail.nyp.edu.sg', GETDATE(), '${student.studentName}', 0);
 
-            INSERT INTO Students (StudentID, UserID, Specialisation, GPA)
-            VALUES ('${student.adminNo}', Scope_identity(), '${student.specialization}', '${student.gpa}');
+            INSERT INTO Students (StudentID, UserID, Specialisation, GPA, Citizenship)
+            VALUES ('${student.adminNo}', Scope_identity(), '${student.specialization}', '${student.gpa}', '${student.citizenship}');
             COMMIT TRANSACTION [T1]
         END TRY
         BEGIN CATCH
@@ -417,6 +417,7 @@ async function beginMatching() {
     GROUP BY 
       i.OpportunityID, i.JobRole, o.CitizenType, o.Slots;
     `);
+    
     const internships = internshipQueryResults.recordset.map((internship) => ({
       opportunity_id: internship.OpportunityID,
       job_role: internship.JobRole,
@@ -425,21 +426,23 @@ async function beginMatching() {
       vacancies: internship.Vacancies,
     }));
 
-    console.log(students);
-    console.log(internships);
-    const matchResults = await handleMatchingAndUpdate(students, internships);
+    const matchResults = await getMatching(students, internships);
+
+    console.log("matching results")
+    console.log(matchResults)
+
+    const deleteQuery = `DELETE FROM Assigned`;
+    await connection.query(deleteQuery);
 
     for (const match of matchResults) {
-      await matchStudentsToOpportunities(
-        match.studentId,
-        match.opportunityId,
-        connection,
-      );
+      q = `
+        INSERT INTO Assigned (OpportunityID, StudentID) 
+        VALUES (${match.opportunityId}, '${match.studentId}');
+      `;
+      await connection.query(q)
     }
-
     return {
-      message: "Matching process completed successfully",
-      details: matchResults,
+      message: "Matching process completed successfully"
     };
   } catch (err) {
     console.error("Error during the matching process", err);
@@ -449,45 +452,26 @@ async function beginMatching() {
   }
 }
 
-async function matchStudentsToOpportunities(
-  studentId,
-  opportunityId,
-  connection,
-) {
-}
-
-async function insertIntoOpportunities(opportunityData) {
+async function insertITP(data) {
   const connection = await dbConfig.connectDB();
 
   try {
-    console.log(opportunityData);
+    let query = `
+    BEGIN TRANSACTION [T1]
+    BEGIN TRY
+        INSERT INTO Opportunities (Deleted, Slots, Description, Company, CitizenType)
+        VALUES (0, ${data.Slots}, '${data.Description || ''}', '${data.Company}', '${data.CitizenType}');
 
-    let query = `INSERT INTO Opportunities (Deleted, Slots, Description, Company, CitizenType) 
-    VALUES (0, '${opportunityData.Slots}', '${opportunityData.Description || ''}', '${opportunityData.Company}', '${opportunityData.CitizenType}')`;
-
-    console.log("Executing query:", query);
+        INSERT INTO ITP (OpportunityID, JobRole) VALUES (Scope_identity(), '${data.JobRole}');
+        COMMIT TRANSACTION [T1]
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION [T1]
+    END CATCH
+    `;
+    console.log(query)
     const result = await connection.query(query);
-    return { message: "Opportunity inserted successfully", opportunityId: result.insertId };
-  } catch (err) {
-    console.error("Error during database operation", err);
-    throw err;
-  } finally {
-    connection.close();
-  }
-}
-
-async function insertIntoITP(itpData) {
-  const connection = await dbConfig.connectDB();
-
-  try {
-    console.log(itpData);
-
-    let query = `INSERT INTO ITP (JobRole) VALUES ('${itpData.JobRole}')`;
-
-    console.log("Executing query:", query);
-    await connection.query(query);
-
-    return { message: "ITP data inserted successfully" };
+    return { message: "Opportunity inserted successfully" };
   } catch (err) {
     console.error("Error during database operation", err);
     throw err;
@@ -519,6 +503,7 @@ module.exports = {
   deletePRISM,
   bulkInsertStudentData,
   beginMatching,
-  insertIntoOpportunities,
-  insertIntoITP
+  insertITP
+  // insertIntoOpportunities,
+  // insertIntoITP
 };

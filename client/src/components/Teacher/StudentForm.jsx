@@ -26,9 +26,9 @@ function StudentForm({ data, onClose, onSubmit }) {
     setInput({
       StudentId: data.StudentID || "",
       FullName: data.FullName || "",
-      Resume: data.Resume || "",
-      specialisation: data.specialisation || "",
-      gpa: data.gpa || "",
+      Resume: data.ResumeLink || "",
+      specialisation: data.Specialisation || "",
+      gpa: data.GPA || "",
     });
   }, [data]);
 
@@ -62,7 +62,6 @@ function StudentForm({ data, onClose, onSubmit }) {
         <Divider />
         <DialogContent>
           <Grid container spacing={2}>
-            {/* {type === "ITP" && ( */}
             <>
               <Grid item xs={6}>
                 <TextField
@@ -70,7 +69,7 @@ function StudentForm({ data, onClose, onSubmit }) {
                   label="StudentId"
                   name="StudentId"
                   size="small"
-                  value={input.StudentID}
+                  value={input.StudentId}
                   onChange={handleInputChange}
                   disabled={true}
                 />

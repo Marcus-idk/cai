@@ -5,7 +5,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import TextField from "@mui/material/TextField";
 import styles from "../../styles/Teacher/ITP-Prism.module.css";
 import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";  
+import SearchIcon from "@mui/icons-material/Search";
 import { fetchITPSummary, updateITPSummary } from "../../api/ITP";
 import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import Edit from "@mui/icons-material/Edit";
@@ -36,19 +36,19 @@ const ITPSummary = () => {
       "&.Mui-selected": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY + theme.palette.action.selectedOpacity,
+          ODD_OPACITY + theme.palette.action.selectedOpacity
         ),
         "&:hover, &.Mui-hovered": {
           backgroundColor: alpha(
             theme.palette.primary.main,
             ODD_OPACITY +
               theme.palette.action.selectedOpacity +
-              theme.palette.action.hoverOpacity,
+              theme.palette.action.hoverOpacity
           ),
           "@media (hover: none)": {
             backgroundColor: alpha(
               theme.palette.primary.main,
-              ODD_OPACITY + theme.palette.action.selectedOpacity,
+              ODD_OPACITY + theme.palette.action.selectedOpacity
             ),
           },
         },
@@ -62,8 +62,8 @@ const ITPSummary = () => {
       setError("");
       try {
         const fetchedData = await fetchITPSummary();
-        console.log("fetchdata")
-        console.log(fetchedData)
+        console.log("fetchdata");
+        console.log(fetchedData);
         let { recordset } = fetchedData;
         setJobs(recordset);
       } catch (error) {
@@ -78,15 +78,15 @@ const ITPSummary = () => {
 
   const mappedData = jobs.map((item) => ({
     ...item,
-    id: item.OpportunityID,
+    id: item.StudentID,
   }));
   const columns = [
-    { field: "OpportunityID", headerName: "Opportunity ID", width: 120 },
-    { field: "Company", headerName: "Company", width: 300 },
-    { field: "JobRole", headerName: "Job Name", width: 300 },
-    { field: "FullName", headerName: "Teacher-In-Charge", width: 200 },
-    { field: "StudentID", headerName: "AdminNo", width: 100 },
-    { field: "StudName", headerName: "Student Name", width: 200 },
+    { field: "StudentID", headerName: "AdminNo", flex: 1 },
+    { field: "StudName", headerName: "Student Name", flex: 1 },
+    { field: "OpportunityID", headerName: "Opportunity ID", flex: 1 },
+    { field: "Company", headerName: "Company", flex: 1 },
+    { field: "JobRole", headerName: "Job Name", flex: 1 },
+    { field: "FullName", headerName: "Teacher-In-Charge", flex: 1 }
   ];
   const actionColumns = [
     {
@@ -104,15 +104,8 @@ const ITPSummary = () => {
     },
   ];
 
-  const rows = mappedData.filter(
-    (item) =>
-      item.OpportunityID ||
-      item.Company.toLowerCase() ||
-      item.JobRole.toLowerCase() ||
-      item.FullName.toLowerCase() ||
-      item.StudentID.toLowerCase() ||
-      item.StudName.toLowerCase(),
-  );
+  const rows = mappedData;
+
   const displayEditForm = (data) => {
     setEditData(data);
     setEditDrawerOpen(true);
@@ -130,7 +123,7 @@ const ITPSummary = () => {
       let fetchedData = await updateITPSummary(
         editData.StudentID,
         data.StudentID,
-        data.id,
+        data.id
       );
     } catch (error) {
       console.log(data);
@@ -148,8 +141,8 @@ const ITPSummary = () => {
     setIsFetching(true);
     try {
       const fetchedData = await fetchITPSummary();
-      console.log("fetchdata")
-      console.log(fetchedData)
+      console.log("fetchdata");
+      console.log(fetchedData);
       let { recordset } = fetchedData;
       setJobs(recordset);
     } catch (error) {
@@ -162,16 +155,18 @@ const ITPSummary = () => {
     Object.values(row).some(
       (value) =>
         typeof value === "string" &&
-        value.toLowerCase().includes(searchText.toLowerCase()),
-    ),
+        value.toLowerCase().includes(searchText.toLowerCase())
+    )
   );
+  console.log("filteredrows")
+  console.log(filteredRows)
   const handleBeginMatching = async () => {
     const firstConfirm = window.confirm(
-      "Are you sure you want to begin the matching process?",
+      "Are you sure you want to begin the matching process?"
     );
     if (!firstConfirm) return;
     const secondConfirm = window.confirm(
-      "This process may take a long time. Do you want to proceed?",
+      "This process may take a long time. Do you want to proceed?"
     );
     if (!secondConfirm) return;
     try {
@@ -193,16 +188,13 @@ const ITPSummary = () => {
   };
 
   return (
-    <div class="container">
+    <div className="container">
       {error && (
         <div
-          class="alert alert-danger alert-dismissible fade show"
+          className="alert alert-danger alert-dismissible fade show"
           role="alert"
         >
           {error}
-          {/* <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button> */}
         </div>
       )}
       <div className={styles["maindiv"]}>

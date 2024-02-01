@@ -275,7 +275,7 @@ const PRISM = () => {
   }, []);
 
   return (
-    <div class="container">
+    <div className="container">
       <div className="itp">
         <ToolBar
           count={filteredData.length}

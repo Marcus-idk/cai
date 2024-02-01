@@ -166,14 +166,14 @@ const StudentForm = () => {
   };
 
   return (
-    <div class="container">
-      <div class="py-5 text-center">
-        <h1 class="display-5">Student Form</h1>
-        <p class="lead">
+    <div className="container">
+      <div className="py-5 text-center">
+        <h1 className="display-5">Student Form</h1>
+        <p className="lead">
           Answer the following questions to the best of your ability.
         </p>
       </div>
-      <div class="row g-5">
+      <div className="row g-5">
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <p>
             <strong>
@@ -181,9 +181,9 @@ const StudentForm = () => {
               curriculum/ITP *
             </strong>
           </p>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="pythonCheckbox"
               value="python"
@@ -191,13 +191,13 @@ const StudentForm = () => {
               checked={codingLanguages.python}
               onChange={(e) => handleCheckboxChange(e, "codingLanguages")}
             />
-            <label class="form-check-label" for="pythonCheckbox">
+            <label className="form-check-label" htmlFor="pythonCheckbox">
               Python
             </label>
           </div>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="javaCheckbox"
               value="java"
@@ -205,13 +205,13 @@ const StudentForm = () => {
               checked={codingLanguages.java}
               onChange={(e) => handleCheckboxChange(e, "codingLanguages")}
             />
-            <label class="form-check-label" for="javaCheckbox">
+            <label className="form-check-label" htmlFor="javaCheckbox">
               Java
             </label>
           </div>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="cSharpCheckbox"
               value="cSharp"
@@ -219,14 +219,14 @@ const StudentForm = () => {
               checked={codingLanguages.cSharp}
               onChange={(e) => handleCheckboxChange(e, "codingLanguages")}
             />
-            <label class="form-check-label" for="cSharpCheckbox">
+            <label className="form-check-label" htmlFor="cSharpCheckbox">
               C#
             </label>
           </div>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
               type="text"
-              class="form-control"
+              className="form-control"
               placeholder="Others"
               id="codingLanguagesInput"
               value={codingLanguages.others}
@@ -240,12 +240,12 @@ const StudentForm = () => {
               project *
             </strong>
           </p>
-          <div class="row g-3">
+          <div className="row g-3">
             {projectInterests.map((interest, index) => (
-              <div class="col-md-2" key={interest.id}>
-                <label class="form-label">{interest.name}</label>
+              <div className="col-md-2" key={interest.id}>
+                <label className="form-label">{interest.name}</label>
                 <select
-                  class="form-select"
+                  className="form-select"
                   value={interest.rank}
                   onChange={(e) => handleRankChange(e, index)}
                 >
@@ -256,7 +256,7 @@ const StudentForm = () => {
                     </option>
                   ))}
                 </select>
-                <div class="invalid-feedback">
+                <div className="invalid-feedback">
                   Please provide a valid state.
                 </div>
               </div>
@@ -266,9 +266,9 @@ const StudentForm = () => {
           <p>
             <strong>What frameworks are you experienced in</strong>
           </p>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="reactCheckbox"
               value="react"
@@ -276,13 +276,13 @@ const StudentForm = () => {
               checked={frameworks.react}
               onChange={(e) => handleCheckboxChange(e, "frameworks")}
             />
-            <label class="form-check-label" for="reactCheckbox">
+            <label className="form-check-label" htmlFor="reactCheckbox">
               React
             </label>
           </div>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="vueJsCheckbox"
               value="vueJs"
@@ -290,13 +290,13 @@ const StudentForm = () => {
               checked={frameworks.vueJs}
               onChange={(e) => handleCheckboxChange(e, "frameworks")}
             />
-            <label class="form-check-label" for="vueJsCheckbox">
+            <label className="form-check-label" htmlFor="vueJsCheckbox">
               Vue.js
             </label>
           </div>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
-              class="form-check-input"
+              className="form-check-input"
               type="checkbox"
               id="flaskCheckbox"
               value="flask"
@@ -304,14 +304,14 @@ const StudentForm = () => {
               checked={frameworks.flask}
               onChange={(e) => handleCheckboxChange(e, "frameworks")}
             />
-            <label class="form-check-label" for="flaskCheckbox">
+            <label className="form-check-label" htmlFor="flaskCheckbox">
               Flask
             </label>
           </div>
-          <div class="form-check form-check-inline">
+          <div className="form-check form-check-inline">
             <input
               type="text"
-              class="form-control"
+              className="form-control"
               placeholder="Others"
               id="frameworksInput"
               value={frameworks.others}
@@ -325,9 +325,9 @@ const StudentForm = () => {
               projects/internships
             </strong>
           </p>
-          <div class="form-floating">
+          <div className="form-floating">
             <textarea
-              class="form-control"
+              className="form-control"
               placeholder="Others"
               id="interestsInput"
               value={interests}
@@ -336,14 +336,14 @@ const StudentForm = () => {
             <label htmlFor="interestsInput">Others</label>
           </div>
           <hr />
-          <div class="row">
+          <div className="row">
             <p>
               <strong>Attach your resume *</strong>
             </p>
-            <div class="col-md-4">
-              <div class="mb-3">
+            <div className="col-md-4">
+              <div className="mb-3">
                 <input
-                  class="form-control"
+                  className="form-control"
                   type="file"
                   id="fileInput"
                   ref={fileInputRef}
@@ -353,13 +353,13 @@ const StudentForm = () => {
                 {fileError && <p className={styles.errorText}>{fileError}</p>}
               </div>
             </div>
-            <div class="col-md-4 ms-auto">
-              <button type="submit" class="btn btn-primary mx-1">
+            <div className="col-md-4 ms-auto">
+              <button type="submit" className="btn btn-primary mx-1">
                 Submit
               </button>
               <button
                 type="button"
-                class="btn btn-outline-secondary mx-1"
+                className="btn btn-outline-secondary mx-1"
                 onClick={resetForm}
               >
                 Reset

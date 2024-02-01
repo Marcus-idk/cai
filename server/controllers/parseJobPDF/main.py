@@ -14,7 +14,8 @@ def extract_job_info(fields, job_suffix):
         'JobName': None,
         'JobDetails': fields.get(f'Project Details{suffix}', None),
         'IntendedLearningOutcomes': fields.get(f'Intended Learning Outcomes{suffix}', None),
-        'PreferredSkillSet': fields.get(f'Preferred Skill Set{suffix}', None)
+        'PreferredSkillSet': fields.get(f'Preferred Skill Set{suffix}', None),
+        'Slots': fields.get(f'Number of Interns{suffix}', None)
     }
     
     if not any(job_info.values()):
@@ -48,7 +49,7 @@ def generate_job_name(details, outcomes, skills):
     return response.choices[0].message.content
 
 def parseData(pdf_path):
-    with open(pdf_path, 'rb') as file:
+    with open(pdf_path, 'rb'):
         reader = PyPDF2.PdfReader(pdf_path, strict=False)
         fields = reader.get_form_text_fields()
 
@@ -67,8 +68,12 @@ def parseData(pdf_path):
             data['job_info'].append(job_info)
             job_suffix += 1
 
-        return data
+        def has_job_name(job):
+            return job["JobName"] != 'None'
 
+        filtered_jobs = list(filter(has_job_name, data["job_info"]))
+        data["job_info"] = filtered_jobs
+        return data
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some PDFs.')
     parser.add_argument('pdf_path', type=str, help='The path to the PDF file to be processed')

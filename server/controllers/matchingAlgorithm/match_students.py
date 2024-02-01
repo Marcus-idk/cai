@@ -81,9 +81,9 @@ def allocate_students_to_internships(students, assignments, internships):
 
     for student in sorted_students:
         for preferred_internship in assignments[student.admin_number]:
-            if internship_vacancies[preferred_internship] > 0:
+            if internship_vacancies[int(preferred_internship)] > 0:
                 final_allocations[student.admin_number] = preferred_internship
-                internship_vacancies[preferred_internship] -= 1
+                internship_vacancies[int(preferred_internship)] -= 1
                 break
 
     return final_allocations
@@ -102,7 +102,6 @@ def match_students_to_itp(students, internships):
 
         # Step 2: Find Best Matches - Use the best_company_match function for each student
         best_matches = best_company_match(student, eligible_internships)
-        print(f"Best matches for Student {student.admin_number}: {best_matches}")
         assignments[student.admin_number] = best_matches
     
     # Sort by GPA and allocate
@@ -110,11 +109,11 @@ def match_students_to_itp(students, internships):
     return final_allocations
 
 if __name__ == "__main__":
-    args = sys.argv[1]
-    student_data_str, internship_data_str = args.split(" - ")
-    
-    student_data = json.loads(student_data_str)
-    internship_data = json.loads(internship_data_str)
+    student = sys.argv[1]
+    internship = sys.argv[2]
+
+    student_data = json.loads(student)
+    internship_data = json.loads(internship)
 
     students = [Student(**data) for data in student_data]
     internships = [ITPInternship(**data) for data in internship_data]

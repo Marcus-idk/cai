@@ -4,14 +4,14 @@ const path = require("path");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 
-async function updateStudent(req, res) {
-  try {
-    const result = await student.updateStudent();
-    res.status(200).json(result);
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-}
+// async function updateStudent(req, res) {
+//   try {
+//     const result = await student.updateStudent();
+//     res.status(200).json(result);
+//   } catch (err) {
+//     res.status(500).send(err.message);
+//   }
+// }
 
 function callPythonScript(functionName, text, pdfPath) {
   return new Promise((resolve, reject) => {
@@ -137,6 +137,6 @@ async function handleSubmitForm(req, res) {
 }
 
 module.exports = {
-  updateStudent,
+  // updateStudent,
   handleSubmitForm,
 };

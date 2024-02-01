@@ -43,7 +43,7 @@ function App() {
           <Route path="studentform" element={<StudentForm />} />
           <Route path="/teacher/itpsummary" element={<ITPSummary />} />
           <Route path="/teacher/prismsummary" element={<PrismSummary />} />
-          <Route path="teacherlanding" element={<TeacherLanding />} />
+          <Route path="/teacher/" element={<TeacherLanding />} />
           <Route path="/teacher/prism" element={<Prism />} />
           <Route
             path="/teacher/viewallstudents"

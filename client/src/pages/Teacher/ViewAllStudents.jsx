@@ -206,7 +206,7 @@ const ViewAllStudents = () => {
   };
 
   return (
-    <div class="container">
+    <div className="container">
       <div className={styles["maindiv"]}>
         <div className={styles["searchAdd"]}>
           <div className={styles["search-div"]}>

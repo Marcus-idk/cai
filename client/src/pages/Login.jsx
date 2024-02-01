@@ -20,7 +20,7 @@ const Login = (props) => {
     } else if (userRole === "regular") {
       navigate("/studentform");
     } else if (userRole === "admin") {
-      navigate("/teacherlanding");
+      navigate("/teacher/");
     } else {
       localStorage.setItem("userRole", "");
       console.error("Invalid User Role");
@@ -61,54 +61,54 @@ const Login = (props) => {
     }
   };
   return (
-    <div class="d-flex align-items-center py-4" style={{ height: 100 + "%" }}>
-      <main class="form-signin w-100 m-auto">
+    <div className="d-flex align-items-center py-4" style={{ height: 100 + "%" }}>
+      <main className="form-signin w-100 m-auto">
         <form>
-          <img class="mb-4" src={nyplogo} alt="" />
-          <div class="input-group has-validation">
-            <div class={"form-floating " + (emailError ? "is-invalid" : "")}>
+          <img className="mb-4" src={nyplogo} alt="" />
+          <div className="input-group has-validation">
+            <div className={"form-floating " + (emailError ? "is-invalid" : "")}>
               <input
                 type="email"
-                class={"form-control " + (emailError ? "is-invalid" : "")}
+                className={"form-control " + (emailError ? "is-invalid" : "")}
                 id="floatingInput"
                 placeholder="name@example.com"
                 value={email}
                 onChange={(ev) => setEmail(ev.target.value)}
               />
-              <label for="floatingInput">Email Address</label>
+              <label htmlFor="floatingInput">Email Address</label>
             </div>
-            <div class="invalid-feedback">{emailError}</div>
+            <div className="invalid-feedback">{emailError}</div>
           </div>
-          <div class="input-group has-validation">
-            <div class={"form-floating " + (passwordError ? "is-invalid" : "")}>
+          <div className="input-group has-validation">
+            <div className={"form-floating " + (passwordError ? "is-invalid" : "")}>
               <input
                 type="password"
-                class={"form-control " + (passwordError ? "is-invalid" : "")}
+                className={"form-control " + (passwordError ? "is-invalid" : "")}
                 id="floatingPassword"
                 placeholder="Password"
                 value={password}
                 onChange={(ev) => setPassword(ev.target.value)}
               />
-              <label for="floatingPassword">Password</label>
+              <label htmlFor="floatingPassword">Password</label>
             </div>
-            <div class="invalid-feedback">{passwordError}</div>
+            <div className="invalid-feedback">{passwordError}</div>
           </div>
-          <div class="form-check text-start my-3">
+          <div className="form-check text-start my-3">
             <a
               href="#"
-              class="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+              className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
             >
               Forgot Password?
             </a>
           </div>
           <button
-            class="btn btn-primary w-100 py-2"
+            className="btn btn-primary w-100 py-2"
             type="button"
             onClick={useButton}
           >
             Sign in
           </button>
-          <p class="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
+          <p className="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
         </form>
       </main>
     </div>

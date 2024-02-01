@@ -1,34 +1,37 @@
-const { spawn } = require("child_process");
-const path = require("path");
+const { spawn } = require('child_process');
+const path = require('path');
 
 function callPythonScript(students, internships) {
   return new Promise((resolve, reject) => {
-    const studentDataStr = JSON.stringify(students);
-    const internshipDataStr = JSON.stringify(internships);
+    console.log(students)
+    console.log(internships)
+    const studentDataStr = JSON.stringify(students).replaceAll(`"`, `\\"`);
+    const internshipDataStr = JSON.stringify(internships).replaceAll(`"`, `\\"`);
 
-    const scriptPath = path.join(__dirname, "path/to/match_students.py");
-    const scriptCommand = `python ${scriptPath} '${studentDataStr}' - '${internshipDataStr}'`;
-
+    const scriptPath = path.join(__dirname, 'matchingAlgorithm/match_students.py');
+    const scriptCommand = `python ${scriptPath} "${studentDataStr}" "${internshipDataStr}"`;
+    console.log(scriptCommand)
     const pythonProcess = spawn(scriptCommand, { shell: true });
 
-    let outputData = "";
 
-    pythonProcess.stdout.on("data", (data) => {
+    let outputData = '';
+
+    pythonProcess.stdout.on('data', (data) => {
       outputData += data.toString();
     });
 
-    pythonProcess.stderr.on("data", (data) => {
+    pythonProcess.stderr.on('data', (data) => {
       console.error(`Python script error: ${data.toString()}`);
       reject(new Error(data.toString()));
     });
-
-    pythonProcess.on("close", (code) => {
+    
+    pythonProcess.on('close', (code) => {
       if (code === 0) {
         try {
           const result = JSON.parse(outputData);
           resolve(result);
         } catch (error) {
-          reject(new Error("Failed to parse output from Python script"));
+          reject(new Error('Failed to parse output from Python script'));
         }
       } else {
         reject(new Error(`Python script exited with code ${code}`));
@@ -37,20 +40,21 @@ function callPythonScript(students, internships) {
   });
 }
 
-async function handleMatchingAndUpdate(req, res) {
+async function getMatching(students, internships) {
   try {
-    const { students, internships } = req.body;
     const result = await callPythonScript(students, internships);
 
-    // Update assignments in the database
-    for (const [studentId, opportunityId] of Object.entries(result)) {
-      await matchingService.assignStudent(opportunityId, studentId);
-    }
+    return Object.entries(result).map(([studentId, opportunityId]) => ({
+      studentId,
+      opportunityId
+    }));
   } catch (error) {
-    console.us(500).send(error.message);
+    console.error('Error in handleMatchingAndUpdate:', error);
+    throw error;
   }
 }
 
+
 module.exports = {
-  handleMatchingAndUpdate,
+  getMatching,
 };
