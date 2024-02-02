@@ -43,7 +43,7 @@ router.put("/updateStudent", teacherController.updateStudent);
 router.post("/addITP", teacherController.addITP);
 //Adds ITP
 
-router.post("/addITPPDF", upload.single('file'), teacherController.addITPPDF);
+router.post("/addITPPDF", upload.single("file"), teacherController.addITPPDF);
 //Adds ITP via PDF
 
 router.post("/prism", teacherController.addPRISM);

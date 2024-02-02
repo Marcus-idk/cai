@@ -71,10 +71,27 @@ async function updateStudentTagAssociations(studentID, tagIDs) {
   connection.close();
 }
 
+async function getByEmail(email) {
+  const connection = await dbConfig.connectDB();
+
+  try {
+    const q = `SELECT * FROM Students s JOIN Users u ON s.UserID = u.UserID WHERE u.Email = '${email}'`;
+    const res = await connection.query(q);
+    if (res.rowsAffected[0] === 0)  return {};
+    return res.recordset[0];
+  } catch (error) {
+    console.error("Error executing get student by email query:", error);
+    throw error;
+  } finally {
+    connection.close();
+  }
+}
+
 module.exports = {
   updateStudentProjectRankings,
   storeResumePath,
   ensureTagsExist,
   getExistingStudentTagAssociations,
   updateStudentTagAssociations,
+  getByEmail
 };

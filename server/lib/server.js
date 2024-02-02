@@ -11,9 +11,11 @@ var cors = require("cors");
 
 //express app
 var app = express();
-app.use(cors({
-  origin: "http://localhost:3000"
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  }),
+);
 
 //middleware to intercept request and response
 app.use(express.json());

@@ -1,36 +1,20 @@
 const loginService = require("../services/loginService");
+const studentService = require("../services/student");
 
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
 
-    if (email == "admin@example.com" && password == "12345678") {
-      res.status(200).json({ userRole: "admin" });
+    const user = await loginService.loginUser(email, password);
+
+    const student = await studentService.getByEmail(user.Email);
+
+    if ('StudentID' in student) {
+      res.status(200).json({ userRole: 'regular', studentID: student.StudentID });
       return;
-    } else if (email == "regular@example.com" && password == "12345678") {
-      res.status(200).json({ userRole: "regular" });
-      return;
-    }
+    } 
 
-    const result = await loginService.loginUser(email, password);
-
-    if (result.recordset.length > 0) {
-      // Successful login
-      const user = result.recordset[0];
-
-      let userRole = null;
-
-      if (user.Role === 0) {
-        userRole = "regular";
-      } else if (user.Role === 1) {
-        userRole = "admin";
-      }
-
-      res.status(200).json({ userRole });
-    } else {
-      console.log("Failed login. No matching user found.");
-      res.status(401).json({ error: "Invalid credentials" });
-    }
+    res.status(200).json({ userRole: 'admin' });
   } catch (err) {
     console.log("Error during login:", err);
     res.status(500).send(err.message);

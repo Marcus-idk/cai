@@ -37,19 +37,19 @@ const ITPSummary = () => {
       "&.Mui-selected": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY + theme.palette.action.selectedOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity,
         ),
         "&:hover, &.Mui-hovered": {
           backgroundColor: alpha(
             theme.palette.primary.main,
             ODD_OPACITY +
               theme.palette.action.selectedOpacity +
-              theme.palette.action.hoverOpacity
+              theme.palette.action.hoverOpacity,
           ),
           "@media (hover: none)": {
             backgroundColor: alpha(
               theme.palette.primary.main,
-              ODD_OPACITY + theme.palette.action.selectedOpacity
+              ODD_OPACITY + theme.palette.action.selectedOpacity,
             ),
           },
         },
@@ -87,7 +87,7 @@ const ITPSummary = () => {
     { field: "OpportunityID", headerName: "Opportunity ID", flex: 1 },
     { field: "Company", headerName: "Company", flex: 1 },
     { field: "JobRole", headerName: "Job Name", flex: 1 },
-    { field: "FullName", headerName: "Teacher-In-Charge", flex: 1 }
+    { field: "FullName", headerName: "Teacher-In-Charge", flex: 1 },
   ];
   const actionColumns = [
     {
@@ -124,7 +124,7 @@ const ITPSummary = () => {
       let fetchedData = await updateITPSummary(
         editData.StudentID,
         data.StudentID,
-        data.id
+        data.id,
       );
     } catch (error) {
       console.log(data);
@@ -156,18 +156,18 @@ const ITPSummary = () => {
     Object.values(row).some(
       (value) =>
         typeof value === "string" &&
-        value.toLowerCase().includes(searchText.toLowerCase())
-    )
+        value.toLowerCase().includes(searchText.toLowerCase()),
+    ),
   );
-  console.log("filteredrows")
-  console.log(filteredRows)
+  console.log("filteredrows");
+  console.log(filteredRows);
   const handleBeginMatching = async () => {
     const firstConfirm = window.confirm(
-      "Are you sure you want to begin the matching process?"
+      "Are you sure you want to begin the matching process?",
     );
     if (!firstConfirm) return;
     const secondConfirm = window.confirm(
-      "This process may take a long time. Do you want to proceed?"
+      "This process may take a long time. Do you want to proceed?",
     );
     if (!secondConfirm) return;
     try {

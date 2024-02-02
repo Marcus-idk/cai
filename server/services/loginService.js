@@ -6,12 +6,12 @@ async function loginUser(email, password) {
 
   try {
     const userQuery = `SELECT * FROM Users WHERE Email = '${email}'`;
-    const users = await connection.query(userQuery);
+    const res = await connection.query(userQuery);
 
-    if (users.length === 0) {
+    if (res.rowsAffected[0] === 0) {
       throw new Error("User not found");
     }
-    const user = users[0];
+    const user = res.recordset[0];
     const match = await bcrypt.compare(password, user.Password);
 
     if (!match) {

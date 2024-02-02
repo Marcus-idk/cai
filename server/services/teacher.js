@@ -1,9 +1,7 @@
 const dbConfig = require("../config/dbConfig");
 const sql = require("mssql");
 const bcrypt = require("bcrypt");
-const {
-  getMatching,
-} = require("../controllers/matchingController");
+const { getMatching } = require("../controllers/matchingController");
 
 async function getAllStudents() {
   const connection = await dbConfig.connectDB();
@@ -263,7 +261,7 @@ async function UpdateITP(
   specialisation,
   startDate,
   endDate,
-  citizenship
+  citizenship,
 ) {
   let connection;
   try {
@@ -281,9 +279,9 @@ async function UpdateITP(
     request.input("JobRole", sql.NVarChar(128), role);
     request.input("CitizenType", sql.NVarChar(256), citizenship);
 
-    console.log("AAAAAA")
-    console.log(citizenship)
-    console.log(request)
+    console.log("AAAAAA");
+    console.log(citizenship);
+    console.log(request);
     const result = await request.execute("UpdateITP");
     return result;
   } catch (error) {
@@ -341,7 +339,7 @@ async function bulkInsertStudentData(studentData) {
 
   try {
     for (const student of studentData) {
-      let pw = await bcrypt.hash(student.password, 5);
+      let pw = await bcrypt.hash(student.password, 12);
       let q = `
         BEGIN TRANSACTION [T1]
         BEGIN TRY
@@ -417,7 +415,7 @@ async function beginMatching() {
     GROUP BY 
       i.OpportunityID, i.JobRole, o.CitizenType, o.Slots;
     `);
-    
+
     const internships = internshipQueryResults.recordset.map((internship) => ({
       opportunity_id: internship.OpportunityID,
       job_role: internship.JobRole,
@@ -428,8 +426,8 @@ async function beginMatching() {
 
     const matchResults = await getMatching(students, internships);
 
-    console.log("matching results")
-    console.log(matchResults)
+    console.log("matching results");
+    console.log(matchResults);
 
     const deleteQuery = `DELETE FROM Assigned`;
     await connection.query(deleteQuery);
@@ -439,10 +437,10 @@ async function beginMatching() {
         INSERT INTO Assigned (OpportunityID, StudentID) 
         VALUES (${match.opportunityId}, '${match.studentId}');
       `;
-      await connection.query(q)
+      await connection.query(q);
     }
     return {
-      message: "Matching process completed successfully"
+      message: "Matching process completed successfully",
     };
   } catch (err) {
     console.error("Error during the matching process", err);
@@ -460,7 +458,7 @@ async function insertITP(data) {
     BEGIN TRANSACTION [T1]
     BEGIN TRY
         INSERT INTO Opportunities (Deleted, Slots, Description, Company, CitizenType)
-        VALUES (0, ${data.Slots}, '${data.Description || ''}', '${data.Company}', '${data.CitizenType}');
+        VALUES (0, ${data.Slots}, '${data.Description || ""}', '${data.Company}', '${data.CitizenType}');
 
         INSERT INTO ITP (OpportunityID, JobRole) VALUES (Scope_identity(), '${data.JobRole}');
         COMMIT TRANSACTION [T1]
@@ -469,7 +467,7 @@ async function insertITP(data) {
         ROLLBACK TRANSACTION [T1]
     END CATCH
     `;
-    console.log(query)
+    console.log(query);
     const result = await connection.query(query);
     return { message: "Opportunity inserted successfully" };
   } catch (err) {
@@ -503,7 +501,7 @@ module.exports = {
   deletePRISM,
   bulkInsertStudentData,
   beginMatching,
-  insertITP
+  insertITP,
   // insertIntoOpportunities,
   // insertIntoITP
 };

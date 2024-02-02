@@ -56,28 +56,25 @@ export async function updateITP({
   endDate,
   slots,
   description,
-  citizenship
+  citizenship,
 }) {
-  const response = await fetchAPI(
-    `/api/teacher/updateITP/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        company,
-        role,
-        teacher,
-        specialisation,
-        startDate,
-        endDate,
-        slots,
-        description,
-        citizenship
-      }),
+  const response = await fetchAPI(`/api/teacher/updateITP/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      company,
+      role,
+      teacher,
+      specialisation,
+      startDate,
+      endDate,
+      slots,
+      description,
+      citizenship,
+    }),
+  });
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -103,9 +100,7 @@ export async function deleteITP(id) {
   return resData;
 }
 export async function fetchITPSummary() {
-  const response = await fetchAPI(
-    "/api/teacher/AllITPSummary",
-  );
+  const response = await fetchAPI("/api/teacher/AllITPSummary");
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -116,19 +111,16 @@ export async function fetchITPSummary() {
 }
 
 export async function updateITPSummary(oldID, newID, opportunityID) {
-  const response = await fetchAPI(
-    `/api/teacher/${opportunityID}/EditAssign`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        oldID,
-        newID,
-      }),
+  const response = await fetchAPI(`/api/teacher/${opportunityID}/EditAssign`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      oldID,
+      newID,
+    }),
+  });
 
   if (!response.ok) {
     const errMsg = await response.text();

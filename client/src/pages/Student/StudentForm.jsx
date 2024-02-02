@@ -142,18 +142,17 @@ const StudentForm = () => {
       console.log("No resume file selected");
     }
 
+    formData.append("StudentID", localStorage.getItem("studentID"));
+
     try {
       console.log("Sending request to the server");
-      const response = await fetchAPI(
-        "/api/user/submit-form",
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            userRole: localStorage.getItem("userRole"),
-          },
+      const response = await fetchAPI("/api/user/submit-form", {
+        method: "POST",
+        body: formData,
+        headers: {
+          userRole: localStorage.getItem("userRole"),
         },
-      );
+      });
 
       if (response.ok) {
         const result = await response.json();

@@ -5,6 +5,7 @@ This script is designed to parse job information from a PDF file and generate jo
 ## Requirements
 
 To run this script, you will need Python installed on your system and the following Python libraries:
+
 - PyPDF2
 - argparse
 - openai
@@ -43,7 +44,7 @@ The script will print a dictionary to the command line with the following struct
       "JobDetails": "Details about the job",
       "IntendedLearningOutcomes": "Expected learning outcomes",
       "PreferredSkillSet": "Required skills for the job"
-    },
+    }
   ]
 }
 ```

@@ -41,13 +41,10 @@ const ViewAllStudents = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetchAPI(
-        "/api/teacher/bulkAddStudent",
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
+      const response = await fetchAPI("/api/teacher/bulkAddStudent", {
+        method: "POST",
+        body: formData,
+      });
 
       if (response.ok) {
         const result = await response.json();
@@ -98,9 +95,7 @@ const ViewAllStudents = () => {
       setIsFetching(true);
       setError();
       try {
-        const response = await fetchAPI(
-          "/api/teacher/getAllStudents",
-        );
+        const response = await fetchAPI("/api/teacher/getAllStudents");
         const resData = await response.json();
         console.log(resData);
         setStudents(resData.recordset);

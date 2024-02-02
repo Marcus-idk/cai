@@ -106,20 +106,24 @@ VALUES
 ('hashed_password_2', 'student1@example.com', '2024-01-02', 'Student One', 0),
 ('hashed_password_3', 'teacher2@example.com', '2024-01-03', 'Teacher Two', 0),
 ('hashed_password_4', 'student2@example.com', '2024-01-04', 'Student Two', 0),
-('hashed_password_5', 'student3@example.com', '2024-01-04', 'Student Three', 0);
+('hashed_password_5', 'student3@example.com', '2024-01-04', 'Student Three', 0),
+('$2a$12$Sw7s8jS417BNJt4FRbGDYO2hA.KEBLzFClT2L/DfS.4FYVTIPfdaG', 'regular@example.com', '2024-01-04', 'wo shi student', 0),
+('$2a$12$Sw7s8jS417BNJt4FRbGDYO2hA.KEBLzFClT2L/DfS.4FYVTIPfdaG', 'admin@example.com', '2024-01-04', 'wo shi admin', 0);
 
 -- Inserting sample data into Teachers table
 INSERT INTO Teachers (UserID, Specialization)
 VALUES
 (1, 'Computer Science'),
-(3, 'Mathematics');
+(3, 'Mathematics'),
+(7, 'PE');
 
 -- Inserting sample data into Students table
 INSERT INTO Students (StudentID, UserID, ResumeLink, Specialisation, Citizenship, GPA, ProjRank)
 VALUES
 ('S100001', 2, 'link_to_resume_1', 'CS', 'Singaporean', 3.5, '1,2,3'),
 ('S100002', 4, 'link_to_resume_2', 'ENG', 'PR', 3.8, '3,2,1'),
-('S100003', 5, 'link_to_resume_2', 'ENG', 'Others', 3.8, '3,2,1');
+('S100003', 5, 'link_to_resume_2', 'ENG', 'Others', 3.8, '3,2,1'),
+('S888888', 6, 'link_to_resume_3', 'CS', 'Others', 1, '3,2,1');
 
 -- Inserting sample data into Opportunities table
 INSERT INTO Opportunities (StartDate, EndDate, Deleted, Slots, Description, Specialisation, TeacherID, Company, CitizenType)

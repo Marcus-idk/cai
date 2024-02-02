@@ -60,26 +60,23 @@ export async function updatePRISM({
   endDate,
   description,
 }) {
-  const response = await fetchAPI(
-    `/api/teacher/prism/${id}`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        slots,
-        type,
-        title,
-        teacher,
-        specialisation,
-        company,
-        startDate,
-        endDate,
-        description,
-      }),
+  const response = await fetchAPI(`/api/teacher/prism/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      slots,
+      type,
+      title,
+      teacher,
+      specialisation,
+      company,
+      startDate,
+      endDate,
+      description,
+    }),
+  });
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -90,15 +87,12 @@ export async function updatePRISM({
 }
 
 export async function deletePRISM(id) {
-  const response = await fetchAPI(
-    `/api/teacher/prism/${id}`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await fetchAPI(`/api/teacher/prism/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -108,9 +102,7 @@ export async function deletePRISM(id) {
   return resData;
 }
 export async function fetchPRISMSummary() {
-  const response = await fetchAPI(
-    "/api/teacher/AllPRISMSummary",
-  );
+  const response = await fetchAPI("/api/teacher/AllPRISMSummary");
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -120,18 +112,15 @@ export async function fetchPRISMSummary() {
   return resData;
 }
 export async function updateITPSummary({ StudentID, id }) {
-  const response = await fetchAPI(
-    `/api/teacher/${id}/EditAssign`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        StudentID,
-      }),
+  const response = await fetchAPI(`/api/teacher/${id}/EditAssign`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({
+      StudentID,
+    }),
+  });
 
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);

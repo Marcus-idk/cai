@@ -21,7 +21,7 @@ function StudentForm({ data, onClose, onSubmit }) {
     specialisation: "",
     gpa: "",
   });
-  useEffect(() => {  
+  useEffect(() => {
     console.log("Data received by StudentForm:", data);
     setInput({
       StudentId: data.StudentID || "",

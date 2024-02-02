@@ -7,6 +7,7 @@ const LogoutButton = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("userRole");
+    localStorage.removeItem("studentID");
     navigate("/");
     window.location.reload(false);
   };

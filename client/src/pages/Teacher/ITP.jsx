@@ -25,7 +25,7 @@ import { ToastContainer, toast } from "react-toastify";
 import Error from "../../components/error/Error";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadITPPopUp from "../../components/Teacher/UploadITPPopUp";
-import IconCitizenship from '@mui/icons-material/Public';
+import IconCitizenship from "@mui/icons-material/Public";
 import { fetchAPI } from "../../utils/fetchAPI";
 const ITP = () => {
   useAdminAuthCheck(true);
@@ -42,43 +42,42 @@ const ITP = () => {
   const [isDeleteDialog, setIsDeleteDialog] = useState(false);
   const [editData, setEditData] = useState({});
   const [deleteData, setDeleteData] = useState(""); //id only
-  
+
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [dataGridHeight, setDataGridHeight] = useState(
     calculateDynamicHeight(),
   );
 
-    const handleOpenUpload = () => {
-      setIsUploadOpen(true);
-    };
-  
-    const handleCloseUpload = () => {
-      setIsUploadOpen(false);
-    };
-  
-    const handleUploadSubmit = (file) => {
-      const formData = new FormData();
-      formData.append('file', file);
-    
-      fetchAPI('/api/teacher/addITPPDF', {
-        method: 'POST',
-        body: formData,
-      })
-      .then(response => {
+  const handleOpenUpload = () => {
+    setIsUploadOpen(true);
+  };
+
+  const handleCloseUpload = () => {
+    setIsUploadOpen(false);
+  };
+
+  const handleUploadSubmit = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetchAPI("/api/teacher/addITPPDF", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
         console.log("Response status:", response.status);
         return response.json();
       })
-      .then(data => {
+      .then((data) => {
         console.log("Response data:", data);
       })
-      .catch(error => {
-        console.error('Error:', error);
+      .catch((error) => {
+        console.error("Error:", error);
       });
-    
-      setIsUploadOpen(false);
-    };
-    
-    
+
+    setIsUploadOpen(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setIsFetching(true);
@@ -86,7 +85,7 @@ const ITP = () => {
       try {
         const fetchedData = await fetchITP();
         let { recordset } = fetchedData;
-        console.log(recordset)
+        console.log(recordset);
         setJobs(recordset);
       } catch (error) {
         setError(error);
@@ -447,7 +446,9 @@ const ITP = () => {
         onSubmit={handleDelete}
       />
       <ToastContainer />
-      <button type="button" class="btn btn-primary" onClick={handleOpenUpload}>Upload ITP Documents</button>
+      <button type="button" class="btn btn-primary" onClick={handleOpenUpload}>
+        Upload ITP Documents
+      </button>
 
       <UploadITPPopUp
         open={isUploadOpen}

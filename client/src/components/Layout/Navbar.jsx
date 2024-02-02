@@ -66,11 +66,7 @@ const Navbar = () => {
           )}
           {userRole === "admin" && (
             <>
-              <NavbarLink
-                linkPath="/teacher/"
-                currPath={path}
-                text="Home"
-              />
+              <NavbarLink linkPath="/teacher/" currPath={path} text="Home" />
               <NavbarLink linkPath="/teacher/itp" currPath={path} text="ITP" />
               <NavbarLink
                 linkPath="/teacher/itpsummary"

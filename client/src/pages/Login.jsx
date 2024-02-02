@@ -46,14 +46,15 @@ const Login = (props) => {
       return;
     }
 
-    if (password.length <= 7) {
-      setPasswordError("The password must be 8 characters or longer");
+    if (password.length <= 2) {
+      setPasswordError("The password must be 3 characters or longer");
       return;
     }
 
     try {
       const data = await loginUserApi(email, password);
       localStorage.setItem("userRole", data.userRole);
+      if ('studentID' in data) localStorage.setItem("studentID", data.studentID);
       navigate(0);
     } catch (error) {
       console.error(error.message);
@@ -61,12 +62,17 @@ const Login = (props) => {
     }
   };
   return (
-    <div className="d-flex align-items-center py-4" style={{ height: 100 + "%" }}>
+    <div
+      className="d-flex align-items-center py-4"
+      style={{ height: 100 + "%" }}
+    >
       <main className="form-signin w-100 m-auto">
         <form>
           <img className="mb-4" src={nyplogo} alt="" />
           <div className="input-group has-validation">
-            <div className={"form-floating " + (emailError ? "is-invalid" : "")}>
+            <div
+              className={"form-floating " + (emailError ? "is-invalid" : "")}
+            >
               <input
                 type="email"
                 className={"form-control " + (emailError ? "is-invalid" : "")}
@@ -80,10 +86,14 @@ const Login = (props) => {
             <div className="invalid-feedback">{emailError}</div>
           </div>
           <div className="input-group has-validation">
-            <div className={"form-floating " + (passwordError ? "is-invalid" : "")}>
+            <div
+              className={"form-floating " + (passwordError ? "is-invalid" : "")}
+            >
               <input
                 type="password"
-                className={"form-control " + (passwordError ? "is-invalid" : "")}
+                className={
+                  "form-control " + (passwordError ? "is-invalid" : "")
+                }
                 id="floatingPassword"
                 placeholder="Password"
                 value={password}

@@ -1,9 +1,9 @@
 const teacherServices = require("../services/teacher");
 const xlsx = require("xlsx");
-const unzipper = require('unzipper');
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+const unzipper = require("unzipper");
+const fs = require("fs");
+const path = require("path");
+const { spawn } = require("child_process");
 const { Console } = require("console");
 async function getAllITP(req, res) {
   try {
@@ -82,9 +82,9 @@ async function bulkInsertStudents(req, res) {
       password: row["Password"].toString(),
       citizenship: row["Citizenship"].toString(),
     }));
-    
-    console.log("PROCESSED")
-    console.log(processedData)
+
+    console.log("PROCESSED");
+    console.log(processedData);
     await teacherServices.bulkInsertStudentData(processedData);
 
     res
@@ -198,7 +198,7 @@ async function updateITP(req, res) {
       specialisation,
       startDate,
       endDate,
-      citizenship
+      citizenship,
     } = req.body;
 
     if (
@@ -225,7 +225,7 @@ async function updateITP(req, res) {
       specialisation,
       startDate,
       endDate,
-      citizenship
+      citizenship,
     );
 
     res.status(200).json(result);
@@ -368,80 +368,83 @@ function callPythonJobParser(pdfPath) {
 
 async function addITPPDF(req, res) {
   try {
-      if (!req.file) {
-          return res.status(400).json({ error: "No file uploaded" });
-      }
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
 
-      const zipFilePath = req.file.path;
+    const zipFilePath = req.file.path;
 
-      await fs.createReadStream(zipFilePath)
-          .pipe(unzipper.Extract({ path: 'extracted' }))
-          .promise();
+    await fs
+      .createReadStream(zipFilePath)
+      .pipe(unzipper.Extract({ path: "extracted" }))
+      .promise();
 
-      const extractedDir = 'extracted';
-      const items = fs.readdirSync(extractedDir, { withFileTypes: true });
+    const extractedDir = "extracted";
+    const items = fs.readdirSync(extractedDir, { withFileTypes: true });
 
-      let companies = [];
+    let companies = [];
 
-      for (const item of items) {
-          const subDirPath = path.join(extractedDir, item.name);
-          const subDirFiles = fs.readdirSync(subDirPath);
+    for (const item of items) {
+      const subDirPath = path.join(extractedDir, item.name);
+      const subDirFiles = fs.readdirSync(subDirPath);
 
-          for (const subFile of subDirFiles) {
-              if (subFile.endsWith('.pdf')) {
-                  const filePath = path.join(subDirPath, subFile);
-                  try {
-                      const result = await callPythonJobParser(filePath);
+      for (const subFile of subDirFiles) {
+        if (subFile.endsWith(".pdf")) {
+          const filePath = path.join(subDirPath, subFile);
+          try {
+            const result = await callPythonJobParser(filePath);
 
-                      const companyData = {
-                          companyName: result.company_info.CompanyName,
-                          jobs: result.job_info.map(job => ({
-                              jobName: job.JobName,
-                              jobDetails: job.JobDetails,
-                              intendedLearningOutcomes: job.IntendedLearningOutcomes,
-                              preferredSkillSet: job.PreferredSkillSet,
-                              slots: job.Slots
-                          }))
-                      };
-                      companies.push(companyData);
+            const companyData = {
+              companyName: result.company_info.CompanyName,
+              jobs: result.job_info.map((job) => ({
+                jobName: job.JobName,
+                jobDetails: job.JobDetails,
+                intendedLearningOutcomes: job.IntendedLearningOutcomes,
+                preferredSkillSet: job.PreferredSkillSet,
+                slots: job.Slots,
+              })),
+            };
+            companies.push(companyData);
 
-                      fs.unlinkSync(filePath);
-                  } catch (error) {
-                      console.error(`Error processing ${subFile}:`, error);
-                  }
-              }
+            fs.unlinkSync(filePath);
+          } catch (error) {
+            console.error(`Error processing ${subFile}:`, error);
           }
+        }
       }
+    }
 
-      for (const company of companies) {
-        await insertCompanyAndJobs(company);
-      }
+    for (const company of companies) {
+      await insertCompanyAndJobs(company);
+    }
 
-      fs.unlinkSync(zipFilePath);
+    fs.unlinkSync(zipFilePath);
 
-      res.status(200).json({ message: "ITP documents processed successfully", companies });
+    res
+      .status(200)
+      .json({ message: "ITP documents processed successfully", companies });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
 async function insertCompanyAndJobs(company) {
   try {
-    console.log(company)
+    console.log(company);
 
     for (const job of company.jobs) {
-        await teacherServices.insertITP({
-            JobRole: job.jobName || '',
-            Slots: job.slots,
-            Company: company.companyName,
-            CitizenType: 'All',
-            Description: job.jobDetails
-        });
+      await teacherServices.insertITP({
+        JobRole: job.jobName || "",
+        Slots: job.slots,
+        Company: company.companyName,
+        CitizenType: "All",
+        Description: job.jobDetails,
+      });
     }
   } catch (error) {
-      console.error('Error inserting company and job data:', error);
-      throw error;
+    console.error("Error inserting company and job data:", error);
+    throw error;
   }
 }
 
