@@ -7,7 +7,7 @@
     "client": "npm start --prefix client",
     "server": "npm run dev --prefix server",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "deploy": "npx concurrently \"npm run server\" \"npm run build --prefix client && sudo npx http-server -p 80 client/build\"",
+    "deploy": "npx concurrently \"OPENAI_API_KEY=\"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\" npm run server\" \"npm run build --prefix client && sudo npx http-server -p 80 client/build -P http://ec2-18-208-234-122.compute-1.amazonaws.com?\"",
     "prettier": "npx prettier . --write"
   },
   "repository": {
