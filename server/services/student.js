@@ -5,12 +5,14 @@ async function updateStudentProjectRankings(studentID, projectRankings) {
     const connection = await dbConfig.connectDB();
 
     const sql = `UPDATE dbo.Students SET ProjRank = '${projectRankings}' WHERE StudentID = '${studentID}'`;
-    await connection.query(sql);
+    const res = await connection.query(sql);
+    if (res.rowsAffected[0]) {
+      console.log(
+        "Project rankings updated successfully for student:",
+        studentID,
+      );
+    }
 
-    console.log(
-      "Project rankings updated successfully for student:",
-      studentID,
-    );
     connection.close();
   } catch (error) {
     console.error("Error in updateStudentProjectRankings:", error);
@@ -77,7 +79,7 @@ async function getByEmail(email) {
   try {
     const q = `SELECT * FROM Students s JOIN Users u ON s.UserID = u.UserID WHERE u.Email = '${email}'`;
     const res = await connection.query(q);
-    if (res.rowsAffected[0] === 0)  return {};
+    if (res.rowsAffected[0] === 0) return {};
     return res.recordset[0];
   } catch (error) {
     console.error("Error executing get student by email query:", error);
@@ -93,5 +95,5 @@ module.exports = {
   ensureTagsExist,
   getExistingStudentTagAssociations,
   updateStudentTagAssociations,
-  getByEmail
+  getByEmail,
 };

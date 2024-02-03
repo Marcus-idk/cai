@@ -9,12 +9,14 @@ async function loginUser(req, res) {
 
     const student = await studentService.getByEmail(user.Email);
 
-    if ('StudentID' in student) {
-      res.status(200).json({ userRole: 'regular', studentID: student.StudentID });
+    if ("StudentID" in student) {
+      res
+        .status(200)
+        .json({ userRole: "regular", studentID: student.StudentID });
       return;
-    } 
+    }
 
-    res.status(200).json({ userRole: 'admin' });
+    res.status(200).json({ userRole: "admin" });
   } catch (err) {
     console.log("Error during login:", err);
     res.status(500).send(err.message);

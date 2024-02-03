@@ -4,6 +4,10 @@ import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import { fetchAPI } from "../../utils/fetchAPI";
 
 const StudentForm = () => {
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+
   useAdminAuthCheck(false);
   const [codingLanguages, setCodingLanguages] = useState({
     python: false,
@@ -115,8 +119,10 @@ const StudentForm = () => {
   };
 
   const handleSubmit = async (event) => {
+    setLoading(true);
+    setSuccessMsg("");
+    setErrMsg("");
     event.preventDefault();
-    console.log("Form submission started");
 
     const formData = new FormData();
     formData.append(
@@ -126,26 +132,15 @@ const StudentForm = () => {
         projectInterests,
         frameworks,
         interests,
+        studentID: localStorage.getItem("studentID"),
       }),
     );
-    console.log("Form data appended:", {
-      codingLanguages,
-      projectInterests,
-      frameworks,
-      interests,
-    });
 
     if (fileInputRef.current.files[0]) {
       formData.append("resume", fileInputRef.current.files[0]);
-      console.log("Resume file appended:", fileInputRef.current.files[0]);
-    } else {
-      console.log("No resume file selected");
     }
 
-    formData.append("StudentID", localStorage.getItem("studentID"));
-
     try {
-      console.log("Sending request to the server");
       const response = await fetchAPI("/api/user/submit-form", {
         method: "POST",
         body: formData,
@@ -155,18 +150,50 @@ const StudentForm = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
+        const result = await response.text();
         console.log("Response received:", result);
+        setSuccessMsg("Form submitted.");
       } else {
         console.error("Form submission failed", response);
+        setErrMsg(await response.text());
       }
     } catch (error) {
       console.error("There was an error submitting the form", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="container">
+      {successMsg !== "" && (
+        <div
+          class="alert alert-success alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>Success!</strong> {successMsg}
+          <button
+            type="button"
+            class="btn-close"
+            onClick={() => setSuccessMsg("")}
+            aria-label="Close"
+          ></button>
+        </div>
+      )}
+      {errMsg !== "" && (
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>Error!</strong> {errMsg}
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            onClick={() => setErrMsg("")}
+          ></button>
+        </div>
+      )}
       <div className="py-5 text-center">
         <h1 className="display-5">Student Form</h1>
         <p className="lead">
@@ -178,7 +205,7 @@ const StudentForm = () => {
           <p>
             <strong>
               What are the coding languages you have learnt during your
-              curriculum/ITP *
+              curriculum/ITP
             </strong>
           </p>
           <div className="form-check form-check-inline">
@@ -233,7 +260,7 @@ const StudentForm = () => {
               onChange={(e) => handleInputChange(e, "codingLanguages")}
             />
           </div>
-          <hr />
+          <hr className="my-3" />
           <p>
             <strong>
               Rank your interests to be involved in the following types of
@@ -248,6 +275,7 @@ const StudentForm = () => {
                   className="form-select"
                   value={interest.rank}
                   onChange={(e) => handleRankChange(e, index)}
+                  required
                 >
                   <option value="">Select Rank</option>
                   {projectInterests.map((_, idx) => (
@@ -262,7 +290,7 @@ const StudentForm = () => {
               </div>
             ))}
           </div>
-          <hr />
+          <hr className="my-3" />
           <p>
             <strong>What frameworks are you experienced in</strong>
           </p>
@@ -318,7 +346,7 @@ const StudentForm = () => {
               onChange={(e) => handleInputChange(e, "frameworks")}
             />
           </div>
-          <hr />
+          <hr className="my-3" />
           <p>
             <strong>
               State any interests you might want to pursue in
@@ -335,10 +363,10 @@ const StudentForm = () => {
             ></textarea>
             <label htmlFor="interestsInput">Others</label>
           </div>
-          <hr />
+          <hr className="my-3" />
           <div className="row">
             <p>
-              <strong>Attach your resume *</strong>
+              <strong>Attach your resume</strong>
             </p>
             <div className="col-md-4">
               <div className="mb-3">
@@ -354,13 +382,28 @@ const StudentForm = () => {
               </div>
             </div>
             <div className="col-md-4 ms-auto">
-              <button type="submit" className="btn btn-primary mx-1">
-                Submit
+              <button
+                type="submit"
+                className="btn btn-primary mx-1"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span
+                      class="spinner-border spinner-border-sm mx-1"
+                      aria-hidden="true"
+                    ></span>
+                    <span role="status">Loading...</span>
+                  </>
+                ) : (
+                  "Submit"
+                )}
               </button>
               <button
                 type="button"
                 className="btn btn-outline-secondary mx-1"
                 onClick={resetForm}
+                disabled={loading}
               >
                 Reset
               </button>
