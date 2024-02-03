@@ -10,20 +10,20 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    const { adminNo } = JSON.parse(req.body.data);
+    const { studentID } = JSON.parse(req.body.data);
     const fileExt = path.extname(file.originalname);
 
     fs.readdir("uploads/", (err, files) => {
       if (err) throw err;
 
-      const existingFile = files.find((f) => f.startsWith(adminNo));
+      const existingFile = files.find((f) => f.startsWith(studentID));
       if (existingFile) {
         fs.unlink(`uploads/${existingFile}`, (err) => {
           if (err) throw err;
         });
       }
 
-      cb(null, adminNo + fileExt);
+      cb(null, studentID + fileExt);
     });
   },
 });
