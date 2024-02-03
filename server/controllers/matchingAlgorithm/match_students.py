@@ -63,10 +63,18 @@ def best_company_match(student, companies):
         ]
     )
 
-
     output = response.choices[0].message.content
-    sorted_companies = []
 
+    prompt = "Format the company IDs (numbers only) in a single line, comma-separated list, strictly in the format: 1,2,..."
+
+    response = clientOpenAI.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+
+    sorted_companies = []
     last_line = output.strip().split('\n')[-1]
     company_ids = last_line.strip().split(",")
     sorted_companies = [company_id.strip() for company_id in company_ids]
