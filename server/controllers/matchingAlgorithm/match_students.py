@@ -66,6 +66,7 @@ def best_company_match(student, companies):
     output = response.choices[0].message.content
 
     prompt = "Format the company IDs (numbers only) in a single line, comma-separated list, strictly in the format: 1,2,..."
+    prompt += "Heres the companies: {output}"
 
     response = clientOpenAI.chat.completions.create(
         model="gpt-4-1106-preview",
