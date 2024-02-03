@@ -1,5 +1,6 @@
 import sys
 import json
+import re
 from openai import OpenAI
 import string
 clientOpenAI = OpenAI()
@@ -44,45 +45,28 @@ class ITPInternship:
     # ITPInternship("INT006", "Cloud Solutions Architect", ["AWS", "Cloud Security"], "Singaporean/PR", 4)
 # ]
 
+def get_match_score(student, company):
+  prompt = "Task: Given the profile of a student looking for an internship and a company, provide a rating from 0 to 100 based on how well the company's job roles and tags align with the student's interests (tags). Output a single number from 0 too 100, no talk just go.\n\n"
+  prompt += f"Student Profile - Specialization: {student.specialization}, Tags: {', '.join(student.tags)}\n"
+  prompt += f"Company Profile - Job Role: {company.job_role}, Tags: {', '.join(company.tags)}\n"
+  response = clientOpenAI.chat.completions.create(
+      model="gpt-4-1106-preview",
+      messages=[
+          {"role": "user", "content": prompt}
+      ]
+  )
+  output = response.choices[0].message.content
+  rating = 0
+  try:
+    rating = int(re.findall(r'\d+', output)[0])
+  except ValueError:
+    pass
+  return max(0, min(100, rating))
 
 def best_company_match(student, companies):
-    prompt = "Task: Rank all the companies provided based on how well their job roles and tags align with the student's interests (tags). Provide the ranking as a single line, comma-separated list of company IDs at the bottom. Format strictly as: '1,2,...' without any prefixes, spaces, or additional characters. Ensure all company IDs are included in the ranking.\n\n"
-
-    prompt += f"Student Profile - Specialization: {student.specialization}, Tags: {', '.join(student.tags)}\n"
-
-    prompt += "Company Profiles:\n"
-    for company in companies:
-        prompt += f"{company.opportunity_id}: Job Role: {company.job_role}, Tags: {', '.join(company.tags)}\n"
-
-    prompt += "Rank the company IDs (numbers only) in a single line, comma-separated list, strictly in the format: 1,2,... based on the best match to the student's profile."
-    
-    response = clientOpenAI.chat.completions.create(
-        model="gpt-4-1106-preview",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    output = response.choices[0].message.content
-
-    prompt = "Format the company IDs (numbers only) in a single line, comma-separated list, strictly in the format: 1,2,..."
-    prompt += "Heres the companies: {output}"
-
-    response = clientOpenAI.chat.completions.create(
-        model="gpt-4-1106-preview",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    output = response.choices[0].message.content
-
-    sorted_companies = []
-    last_line = output.strip().split('\n')[-1]
-    company_ids = last_line.strip().split(",")
-    sorted_companies = [company_id.strip() for company_id in company_ids]
-
-    return sorted_companies
+    ratings = [(get_match_score(student, company), company.opportunity_id) for company in companies]
+    ratings = sorted(ratings, reverse=True)
+    return [i[1] for i in ratings]
 
 def allocate_students_to_internships(students, assignments, internships):
     sorted_students = sorted(students, key=lambda student: student.gpa, reverse=True)
