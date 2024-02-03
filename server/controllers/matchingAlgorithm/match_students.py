@@ -46,15 +46,15 @@ class ITPInternship:
 
 
 def best_company_match(student, companies):
-    prompt = "Task: Rank all the companies provided based on how well their job roles and tags align with the student's interests (tags). Provide the ranking as a single line, comma-separated list of company IDs at the bottom. Format strictly as: 'Company 1 ID, Company 2 ID, ...'. Ensure all company IDs are included and separated by commas without any additional spaces or characters.\n\n"
+    prompt = "Task: Rank all the companies provided based on how well their job roles and tags align with the student's interests (tags). Provide the ranking as a single line, comma-separated list of company IDs at the bottom. Format strictly as: '1,2,...' without any prefixes, spaces, or additional characters. Ensure all company IDs are included in the ranking.\n\n"
 
     prompt += f"Student Profile - Specialization: {student.specialization}, Tags: {', '.join(student.tags)}\n"
 
     prompt += "Company Profiles:\n"
     for company in companies:
-        prompt += f"Company ID: {company.opportunity_id}, Job Role: {company.job_role}, Tags: {', '.join(company.tags)}\n"
+        prompt += f"{company.opportunity_id}: Job Role: {company.job_role}, Tags: {', '.join(company.tags)}\n"
 
-    prompt += "Provide the company IDs in a single line, comma-separated list, strictly in the format: Company 1 ID,Company 2 ID,...."
+    prompt += "Rank the company IDs (numbers only) in a single line, comma-separated list, strictly in the format: 1,2,... based on the best match to the student's profile."
     
     response = clientOpenAI.chat.completions.create(
         model="gpt-4-1106-preview",
@@ -62,6 +62,7 @@ def best_company_match(student, companies):
             {"role": "user", "content": prompt}
         ]
     )
+
 
     output = response.choices[0].message.content
     sorted_companies = []
