@@ -80,8 +80,13 @@ async function handleSubmitForm(req, res) {
     const resume = req.file;
     console.log(resume);
     // change file name to original name, replace upload if alr exists
-    const { codingLanguages, projectInterests, frameworks, interests, studentID } =
-      JSON.parse(req.body.data);
+    const {
+      codingLanguages,
+      projectInterests,
+      frameworks,
+      interests,
+      studentID,
+    } = JSON.parse(req.body.data);
 
     let languagesAndFrameworks = [];
     for (const [key, value] of Object.entries(codingLanguages)) {
@@ -129,6 +134,7 @@ async function handleSubmitForm(req, res) {
     console.log("final: " + sortedAndFormattedProjectInterests);
     console.log(tags);
     updateStudentData(studentID, sortedAndFormattedProjectInterests, tags);
+    res.status(200).send("ok");
   } catch (err) {
     console.log("Error in handleSubmitForm:", err);
     res.status(500).send(err.message);

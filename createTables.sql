@@ -1,3 +1,5 @@
+USE SimAppDB;
+
 -- Dropping existing tables
 DROP TABLE IF EXISTS ITP;
 DROP TABLE IF EXISTS PRISM;
@@ -107,8 +109,8 @@ VALUES
 ('hashed_password_3', 'teacher2@example.com', '2024-01-03', 'Teacher Two', 0),
 ('hashed_password_4', 'student2@example.com', '2024-01-04', 'Student Two', 0),
 ('hashed_password_5', 'student3@example.com', '2024-01-04', 'Student Three', 0),
-('$2a$12$Sw7s8jS417BNJt4FRbGDYO2hA.KEBLzFClT2L/DfS.4FYVTIPfdaG', 'regular@example.com', '2024-01-04', 'wo shi student', 0),
-('$2a$12$Sw7s8jS417BNJt4FRbGDYO2hA.KEBLzFClT2L/DfS.4FYVTIPfdaG', 'admin@example.com', '2024-01-04', 'wo shi admin', 0);
+('$2a$12$RR9qZGJgPz94dM7i/ubESu.lIBYKWH5XVVnGx8V8NRYtI9dshSqIu', 'regular@example.com', '2024-01-04', 'wo shi student', 0),
+('$2a$12$RR9qZGJgPz94dM7i/ubESu.lIBYKWH5XVVnGx8V8NRYtI9dshSqIu', 'admin@example.com', '2024-01-04', 'wo shi admin', 0);
 
 -- Inserting sample data into Teachers table
 INSERT INTO Teachers (UserID, Specialization)
@@ -154,9 +156,11 @@ VALUES
 -- Inserting sample data into TagKey table
 INSERT INTO TagKey (TagID, StudentID, OpportunityID)
 VALUES
-(1, 'S100001', 1),
-(2, 'S100002', 2),
-(3, 'S100001', 3);
+(1, 'S100001', NULL),
+(2, 'S100002', NULL),
+(3, 'S100001', NULL);
+(2, NULL, 1),
+(3, NULL, 3);
 
 INSERT INTO TagKey (TagID, StudentID)
 VALUES

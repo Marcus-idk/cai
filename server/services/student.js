@@ -12,7 +12,7 @@ async function updateStudentProjectRankings(studentID, projectRankings) {
         studentID,
       );
     }
-  
+
     connection.close();
   } catch (error) {
     console.error("Error in updateStudentProjectRankings:", error);
@@ -79,7 +79,7 @@ async function getByEmail(email) {
   try {
     const q = `SELECT * FROM Students s JOIN Users u ON s.UserID = u.UserID WHERE u.Email = '${email}'`;
     const res = await connection.query(q);
-    if (res.rowsAffected[0] === 0)  return {};
+    if (res.rowsAffected[0] === 0) return {};
     return res.recordset[0];
   } catch (error) {
     console.error("Error executing get student by email query:", error);
@@ -95,5 +95,5 @@ module.exports = {
   ensureTagsExist,
   getExistingStudentTagAssociations,
   updateStudentTagAssociations,
-  getByEmail
+  getByEmail,
 };

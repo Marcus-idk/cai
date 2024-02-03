@@ -46,15 +46,16 @@ const Login = (props) => {
       return;
     }
 
-    if (password.length <= 2) {
-      setPasswordError("The password must be 3 characters or longer");
+    if (password.length <= 7) {
+      setPasswordError("The password must be 8 characters or longer");
       return;
     }
 
     try {
       const data = await loginUserApi(email, password);
       localStorage.setItem("userRole", data.userRole);
-      if ('studentID' in data) localStorage.setItem("studentID", data.studentID);
+      if ("studentID" in data)
+        localStorage.setItem("studentID", data.studentID);
       navigate(0);
     } catch (error) {
       console.error(error.message);
