@@ -158,7 +158,7 @@ INSERT INTO TagKey (TagID, StudentID, OpportunityID)
 VALUES
 (1, 'S100001', NULL),
 (2, 'S100002', NULL),
-(3, 'S100001', NULL);
+(3, 'S100001', NULL),
 (2, NULL, 1),
 (3, NULL, 3);
 
@@ -168,7 +168,7 @@ VALUES
 (1, 'S100003');
 
 -- Inserting sample data into Assigned table
-INSERT INTO Assigned (OpportunityID, StudentID, Comments)
-VALUES
+-- INSERT INTO Assigned (OpportunityID, StudentID, Comments)
+-- VALUES
 -- (2, 'S100001', 'Assigned for summer internship'),
 -- (1, 'S100002', 'Assigned for data project')
