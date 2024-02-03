@@ -116,7 +116,6 @@ const StudentForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Form submission started");
 
     const formData = new FormData();
     formData.append(
@@ -126,26 +125,15 @@ const StudentForm = () => {
         projectInterests,
         frameworks,
         interests,
+        studentID: localStorage.getItem("studentID"),
       }),
     );
-    console.log("Form data appended:", {
-      codingLanguages,
-      projectInterests,
-      frameworks,
-      interests,
-    });
 
     if (fileInputRef.current.files[0]) {
       formData.append("resume", fileInputRef.current.files[0]);
-      console.log("Resume file appended:", fileInputRef.current.files[0]);
-    } else {
-      console.log("No resume file selected");
     }
 
-    formData.append("StudentID", localStorage.getItem("studentID"));
-
     try {
-      console.log("Sending request to the server");
       const response = await fetchAPI("/api/user/submit-form", {
         method: "POST",
         body: formData,
@@ -178,7 +166,7 @@ const StudentForm = () => {
           <p>
             <strong>
               What are the coding languages you have learnt during your
-              curriculum/ITP *
+              curriculum/ITP
             </strong>
           </p>
           <div className="form-check form-check-inline">
@@ -233,7 +221,7 @@ const StudentForm = () => {
               onChange={(e) => handleInputChange(e, "codingLanguages")}
             />
           </div>
-          <hr />
+          <hr className="my-3"/>
           <p>
             <strong>
               Rank your interests to be involved in the following types of
@@ -248,6 +236,7 @@ const StudentForm = () => {
                   className="form-select"
                   value={interest.rank}
                   onChange={(e) => handleRankChange(e, index)}
+                  required
                 >
                   <option value="">Select Rank</option>
                   {projectInterests.map((_, idx) => (
@@ -262,7 +251,7 @@ const StudentForm = () => {
               </div>
             ))}
           </div>
-          <hr />
+          <hr className="my-3"/>
           <p>
             <strong>What frameworks are you experienced in</strong>
           </p>
@@ -318,7 +307,7 @@ const StudentForm = () => {
               onChange={(e) => handleInputChange(e, "frameworks")}
             />
           </div>
-          <hr />
+          <hr className="my-3"/>
           <p>
             <strong>
               State any interests you might want to pursue in
@@ -335,10 +324,10 @@ const StudentForm = () => {
             ></textarea>
             <label htmlFor="interestsInput">Others</label>
           </div>
-          <hr />
+          <hr className="my-3"/>
           <div className="row">
             <p>
-              <strong>Attach your resume *</strong>
+              <strong>Attach your resume</strong>
             </p>
             <div className="col-md-4">
               <div className="mb-3">

@@ -5,12 +5,14 @@ async function updateStudentProjectRankings(studentID, projectRankings) {
     const connection = await dbConfig.connectDB();
 
     const sql = `UPDATE dbo.Students SET ProjRank = '${projectRankings}' WHERE StudentID = '${studentID}'`;
-    await connection.query(sql);
-
-    console.log(
-      "Project rankings updated successfully for student:",
-      studentID,
-    );
+    const res = await connection.query(sql);
+    if (res.rowsAffected[0]) {
+      console.log(
+        "Project rankings updated successfully for student:",
+        studentID,
+      );
+    }
+  
     connection.close();
   } catch (error) {
     console.error("Error in updateStudentProjectRankings:", error);
