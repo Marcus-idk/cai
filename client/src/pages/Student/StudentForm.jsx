@@ -120,6 +120,8 @@ const StudentForm = () => {
 
   const handleSubmit = async (event) => {
     setLoading(true);
+    setSuccessMsg("");
+    setErrMsg("");
     event.preventDefault();
 
     const formData = new FormData();
@@ -148,7 +150,7 @@ const StudentForm = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
+        const result = await response.text();
         console.log("Response received:", result);
         setSuccessMsg("Form submitted.");
       } else {
@@ -401,6 +403,7 @@ const StudentForm = () => {
                 type="button"
                 className="btn btn-outline-secondary mx-1"
                 onClick={resetForm}
+                disabled={loading}
               >
                 Reset
               </button>
