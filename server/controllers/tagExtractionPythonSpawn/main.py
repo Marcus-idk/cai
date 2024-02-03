@@ -26,6 +26,7 @@ def extractTagsForCompanyInterests(text):
         "1. Include tags for industry sectors, fields, or types of work explicitly mentioned, such as 'Machine Learning', 'Web Development', 'Finance', etc.\n"
         "2. If the input is too broad or lacks specific references to company interests (like 'I want to work at a big company'), tag as 'General Company Interest' or 'Too General'.\n"
         "3. Do not infer or assume specific company interests not clearly stated in the input.\n"
+        "4. If the text is empty, just return something like 'Nothing'.\n"
         "Analyze the following input and generate tags accordingly: " + text +
         "\nExpected output format: 'Tags: Machine Learning, Web Development'. Separate tags with commas. If the input is too general or lacks specific references, return 'General Company Interest' or 'No Relevant Context'."
     )
@@ -38,7 +39,6 @@ def extractTagsForCompanyInterests(text):
     return response.choices[0].message.content
 
 def convertTagsToArray(tags_string):
-    # maybe add checks here in case form wrong
     clean_string = tags_string.replace("Tags:", "").strip()
     if clean_string in ['General Coding', 'No Relevant Context']:
         return []
@@ -50,19 +50,6 @@ def standardizeTechName(tech_name):
         "Convert the given technology name to its most commonly recognized and official version. For instance, 'Reactjs' should be standardized to 'React', 'Pyton' to 'Python', and 'javascrpt' to 'JavaScript'. Avoid adding unnecessary text like 'Standardization:' before the name. Simply provide the correct, official form of the technology name.\n\n"
         "Input Technology Name: " + tech_name +
         "\nStandardized Version:"
-    )
-    response = clientOpenAI.chat.completions.create(
-        model="gpt-4-1106-preview",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-    standardized_name = response.choices[0].message.content.strip()
-    return standardized_name
-
-def standardizeInterest(interests):
-    prompt = (
-        "Please process the following text by expanding any short forms or abbreviations to their full forms. Keep the output brief, ideally just a few words. For instance, 'Web Dev' should be converted to 'Web Development'. Here's the text I'd like you to transform: " + interests
     )
     response = clientOpenAI.chat.completions.create(
         model="gpt-4-1106-preview",
@@ -86,8 +73,7 @@ def remove_punctuation(text):
 def standardizeInterestsArray(interests_array):
     standardizeInterests = []
     for interest in interests_array:
-        standardized_name = standardizeInterest(interest)
-        standardized_name = remove_punctuation(standardized_name)
+        standardized_name = remove_punctuation(interest)
         standardizeInterests.append(standardized_name)
     return standardizeInterests
 
