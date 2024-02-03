@@ -61,7 +61,7 @@ def get_match_score(student, company):
     rating = int(re.findall(r'\d+', output)[0])
   except ValueError:
     pass
-  return max(0, min(100, rating))
+  return rating
 
 def best_company_match(student, companies):
     ratings = [(get_match_score(student, company), company.opportunity_id) for company in companies]
