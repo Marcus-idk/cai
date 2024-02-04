@@ -474,7 +474,7 @@ async function insertITP(data) {
 
         INSERT INTO ITP (OpportunityID, JobRole) VALUES (@oppid, '${data.JobRole}');
 
-        ${generateTagInserts(data.Tags)}        
+        ${generateTagInserts(data.tagIDs)}        
 
         COMMIT TRANSACTION [T1]
     END TRY
