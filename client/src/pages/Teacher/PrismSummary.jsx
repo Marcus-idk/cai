@@ -10,7 +10,7 @@ import { fetchPRISMSummary } from "../../api/PRISM";
 import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import axios from "axios";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
-
+import 'animate.css';
 const PrismSummary = (props) => {
   useAdminAuthCheck(true);
   const ODD_OPACITY = 0.2;
@@ -153,7 +153,7 @@ const PrismSummary = (props) => {
   ];
 
   return (
-    <div>
+    <div className="animate__animated animate__fadeIn">
       <div className={styles["maindiv"]}>
         <div className={styles["search-div"]}>
           <TextField

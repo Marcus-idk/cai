@@ -21,6 +21,7 @@ import {
   formatDateToDDMMYY,
   formatDateToShortNumeric,
 } from "../../utils/formatTime";
+import 'animate.css';
 import { ToastContainer, toast } from "react-toastify";
 import Error from "../../components/error/Error";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
@@ -295,7 +296,7 @@ const ITP = () => {
 
   return (
     <div>
-      <div className="itp">
+      <div className="itp animate__animated animate__fadeIn">
         <ToolBar
           count={filteredData.length}
           title="Internship Job Listings"

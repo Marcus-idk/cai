@@ -15,6 +15,7 @@ import PRISMImage from "../../assets/images/Buttons/PRISM.jpg";
 import ITPSummaryImage from "../../assets/images/Buttons/ITPSummary.jpg";
 import PRISMSummaryImage from "../../assets/images/Buttons/PRISMSummary.jpg";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
+import 'animate.css';
 
 const images = [
   {
@@ -114,41 +115,43 @@ const ImageMarked = styled("span")(({ theme }) => ({
 const TeacherLanding = () => {
   useAdminAuthCheck(true);
   return (
-    <div className={styles.teacherContainer}>
-      <h2>Welcome to ITP/PRISM Interest Mapping Website</h2>
+    <div className="animate__animated animate__fadeIn">
+      <div className={styles.teacherContainer}>
+        <h2>Welcome to ITP/PRISM Interest Mapping Website</h2>
 
-      <Box className={styles["Box"]}>
-        {images.map((image) => (
-          <ImageButton
-            component={Link}
-            to={image.link}
-            focusRipple
-            key={image.title}
-            style={{
-              width: image.width,
-            }}
-          >
-            <ImageSrc style={{ backgroundImage: `url(${image.url})` }} />
-            <ImageBackdrop className="MuiImageBackdrop-root" />
-            <Image>
-              <Typography
-                component="span"
-                variant="subtitle1"
-                color="inherit"
-                sx={{
-                  position: "relative",
-                  p: 4,
-                  pt: 2,
-                  pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
-                }}
-              >
-                {image.title}
-                <ImageMarked className="MuiImageMarked-root" />
-              </Typography>
-            </Image>
-          </ImageButton>
-        ))}
-      </Box>
+        <Box className={styles["Box"]}>
+          {images.map((image) => (
+            <ImageButton
+              component={Link}
+              to={image.link}
+              focusRipple
+              key={image.title}
+              style={{
+                width: image.width,
+              }}
+            >
+              <ImageSrc style={{ backgroundImage: `url(${image.url})` }} />
+              <ImageBackdrop className="MuiImageBackdrop-root" />
+              <Image>
+                <Typography
+                  component="span"
+                  variant="subtitle1"
+                  color="inherit"
+                  sx={{
+                    position: "relative",
+                    p: 4,
+                    pt: 2,
+                    pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
+                  }}
+                >
+                  {image.title}
+                  <ImageMarked className="MuiImageMarked-root" />
+                </Typography>
+              </Image>
+            </ImageButton>
+          ))}
+        </Box>
+      </div>
     </div>
   );
 };

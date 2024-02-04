@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/UI/Login.module.css";
 import { loginUserApi } from "../api/Login";
 import nyplogo from "../assets/images/nyplogo.png";
+import 'animate.css';
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
@@ -64,7 +65,7 @@ const Login = (props) => {
   };
   return (
     <div
-      className="d-flex align-items-center py-4"
+      className="d-flex align-items-center py-4 animate__animated animate__fadeIn"
       style={{ height: 100 + "%" }}
     >
       <main className="form-signin w-100 m-auto">

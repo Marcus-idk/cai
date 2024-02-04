@@ -12,7 +12,7 @@ import Edit from "@mui/icons-material/Edit";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import Button from "@mui/material/Button";
 import { fetchAPI } from "../../utils/fetchAPI";
-
+import 'animate.css';
 const ITPSummary = () => {
   useAdminAuthCheck(true);
   const ODD_OPACITY = 0.2;
@@ -189,7 +189,7 @@ const ITPSummary = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container animate__animated animate__fadeIn">
       {error && (
         <div
           className="alert alert-danger alert-dismissible fade show"

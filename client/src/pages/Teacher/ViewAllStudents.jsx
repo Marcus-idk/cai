@@ -14,7 +14,7 @@ import { fetchStudent, updateStudent, addStudent } from "../../api/Student";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadStudentBulkPopUp from "../../components/Teacher/UploadStudentBulkPopUp";
 import { fetchAPI } from "../../utils/fetchAPI";
-
+import 'animate.css';
 const ViewAllStudents = () => {
   useAdminAuthCheck(true);
   const ODD_OPACITY = 0.2;
@@ -202,7 +202,7 @@ const ViewAllStudents = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container animate__animated animate__fadeIn">
       <div className={styles["maindiv"]}>
         <div className={styles["searchAdd"]}>
           <div className={styles["search-div"]}>

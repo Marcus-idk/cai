@@ -14,6 +14,7 @@ import PRISMImage from "../assets/images/Buttons/PRISM.jpg";
 import ITPSummaryImage from "../assets/images/Buttons/ITPSummary.jpg";
 import PRISMSummaryImage from "../assets/images/Buttons/PRISMSummary.jpg";
 import useAdminAuthCheck from "../utils/useAdminAuthCheck";
+import 'animate.css';
 
 const images = [
   {
@@ -113,7 +114,7 @@ const ImageMarked = styled("span")(({ theme }) => ({
 const TeacherLanding = () => {
   useAdminAuthCheck(true);
   return (
-    <div className="container">
+    <div className="container animate__animated animate__fadeIn">
       <div className={styles.teacherContainer}>
         <h2>Welcome to ITP/PRISM Interest Mapping Website</h2>
         <Box className={styles["Box"]}>
