@@ -28,7 +28,31 @@ const ViewAllStudents = () => {
   const [search, setSearch] = useState("");
   const [isEditDrawerOpen, setEditDrawerOpen] = useState(false);
   const [isUploadExcelOpen, setIsUploadExcelOpen] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
 
+    async function fetchData() {
+      setIsFetching(true);
+      setError();
+      try {
+        const response = await fetchAPI("/api/teacher/getAllStudents");
+        const resData = await response.json();
+        console.log(resData);
+        setStudents(resData.recordset);
+
+        //prevent app crash if error is thrown
+        if (!response.ok) {
+          const error = new Error("Failed to fetch Students");
+          throw error;
+        }
+        console.log(resData.recordset);
+      } catch (error) {
+        setError({ message: error.message || "Failed to fetch Students" });
+      } finally {
+        setIsFetching(false);
+      }
+    }
   const handleOpenPopup = () => {
     setIsUploadExcelOpen(true);
   };
@@ -38,6 +62,9 @@ const ViewAllStudents = () => {
   };
 
   const handleSubmitStudents = async (file) => {
+    setIsAdding(true);
+    setSuccessMsg("");
+    setErrMsg("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -50,11 +77,17 @@ const ViewAllStudents = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Success:", result);
+        setSuccessMsg("Students added!");
+        fetchData();
       } else {
         console.error("Server responded with: ", response.status);
+        setErrMsg("HTTP Error: " + response.status);
       }
     } catch (error) {
       console.error("Error submitting form: ", error);
+      setErrMsg(error.toString());
+    } finally {
+      setIsAdding(false);
     }
   };
 
@@ -92,27 +125,6 @@ const ViewAllStudents = () => {
   }));
 
   useEffect(() => {
-    async function fetchData() {
-      setIsFetching(true);
-      setError();
-      try {
-        const response = await fetchAPI("/api/teacher/getAllStudents");
-        const resData = await response.json();
-        console.log(resData);
-        setStudents(resData.recordset);
-
-        //prevent app crash if error is thrown
-        if (!response.ok) {
-          const error = new Error("Failed to fetch Students");
-          throw error;
-        }
-        console.log(resData.recordset);
-      } catch (error) {
-        setError({ message: error.message || "Failed to fetch Students" });
-      } finally {
-        setIsFetching(false);
-      }
-    }
     fetchData();
   }, []);
 
@@ -218,6 +230,10 @@ const ViewAllStudents = () => {
   );
 
   const updateStudentData = async (data) => {
+    setSuccessMsg("")
+    setErrMsg("");
+    closeEditDrawer();
+    setIsFetching(true);
     console.log("=============");
     console.log(data);
     try {
@@ -227,13 +243,45 @@ const ViewAllStudents = () => {
         spec: data.specialisation,
         gpa: data.gpa,
       });
+      setSuccessMsg("Student updated!")
     } catch (error) {
       console.error("Failed to update student data", error);
+      setErrMsg(error.toString());
+    } finally {
+      fetchData();
     }
   };
 
   return (
     <div className="container animate__animated animate__fadeIn">
+        {successMsg !== "" && (
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Success!</strong> {successMsg}
+            <button
+              type="button"
+              class="btn-close"
+              onClick={() => setSuccessMsg("")}
+              aria-label="Close"
+            ></button>
+          </div>
+        )}
+        {errMsg !== "" && (
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Error!</strong> {errMsg}
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              onClick={() => setErrMsg("")}
+            ></button>
+          </div>
+        )}
       <div className={styles["maindiv"]}>
         <div className={styles["searchAdd"]}>
           <div className={styles["search-div"]}>
@@ -265,6 +313,7 @@ const ViewAllStudents = () => {
             getRowClassName={(params) =>
               params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
             }
+            loading={isFetching}
           />
 
           {isEditDrawerOpen && (
@@ -276,12 +325,25 @@ const ViewAllStudents = () => {
           )}
 
           <div>
+          <br />
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
               onClick={handleOpenPopup}
+              disabled={isAdding}
             >
-              Bulk Add
+
+                {isAdding ? (
+                  <>
+                    <span
+                      class="spinner-border spinner-border-sm mx-1"
+                      aria-hidden="true"
+                    ></span>
+                    <span role="status">Loading...</span>
+                  </>
+                ) : (
+                  "Bulk Add"
+                )}
             </Button>
             <UploadStudentBulkPopUp
               open={isUploadExcelOpen}

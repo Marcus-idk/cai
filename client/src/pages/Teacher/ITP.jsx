@@ -44,42 +44,15 @@ const ITP = () => {
   const [editData, setEditData] = useState({});
   const [deleteData, setDeleteData] = useState(""); //id only
 
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [dataGridHeight, setDataGridHeight] = useState(
     calculateDynamicHeight(),
   );
 
-  const handleOpenUpload = () => {
-    setIsUploadOpen(true);
-  };
-
-  const handleCloseUpload = () => {
-    setIsUploadOpen(false);
-  };
-
-  const handleUploadSubmit = (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    fetchAPI("/api/teacher/addITPPDF", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => {
-        console.log("Response status:", response.status);
-        return response.json();
-      })
-      .then((data) => {
-        console.log("Response data:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-
-    setIsUploadOpen(false);
-  };
-
-  useEffect(() => {
     const fetchData = async () => {
       setIsFetching(true);
       setError();
@@ -94,6 +67,45 @@ const ITP = () => {
         setIsFetching(false);
       }
     };
+
+  const handleOpenUpload = () => {
+    setIsUploadOpen(true);
+  };
+
+  const handleCloseUpload = () => {
+    setIsUploadOpen(false);
+  };
+
+  const handleUploadSubmit = (file) => {
+    setSuccessMsg("");
+    setErrMsg("");
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetchAPI("/api/teacher/addITPPDF", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => {
+        console.log("Response status:", response.status);
+        setLoading(false);
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Response data:", data);
+        setSuccessMsg(data.message);
+        fetchData();
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setErrMsg(error.toString());
+      });
+
+    setIsUploadOpen(false);
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -250,7 +262,10 @@ const ITP = () => {
 
   const handleEdit = async (data) => {
     try {
+      setIsEditDialog(false);
+      setIsFetching(true);
       await updateITP(data);
+      setIsFetching(false);
       toast.success(`Successfully edited job`);
     } catch (error) {
       toast.error(error.message);
@@ -266,7 +281,9 @@ const ITP = () => {
 
   const handleDelete = async (id) => {
     try {
+      setIsFetching(true);
       let fetchedData = await deleteITP(id);
+      setIsFetching(false);
       toast.success(`Successfully deleted job`);
       // Any other state updates needed
     } catch (error) {
@@ -296,6 +313,55 @@ const ITP = () => {
 
   return (
     <div>
+      <div className="my-3 text-center container">
+        {successMsg !== "" && (
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Success!</strong> {successMsg}
+            <button
+              type="button"
+              class="btn-close"
+              onClick={() => setSuccessMsg("")}
+              aria-label="Close"
+            ></button>
+          </div>
+        )}
+        {errMsg !== "" && (
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <strong>Error!</strong> {errMsg}
+            <button
+              type="button"
+              class="btn-close"
+              aria-label="Close"
+              onClick={() => setErrMsg("")}
+            ></button>
+          </div>
+        )}
+        <button type="button" class="btn btn-primary" onClick={handleOpenUpload}
+                disabled={loading}>
+                {loading ? (
+                  <>
+                    <span
+                      class="spinner-border spinner-border-sm mx-1"
+                      aria-hidden="true"
+                    ></span>
+                    <span role="status">Loading...</span>
+                  </>
+                ) : (
+                  "Upload ITP Documents"
+                )}
+        </button>
+        <UploadITPPopUp
+          open={isUploadOpen}
+          onClose={handleCloseUpload}
+          onSubmit={handleUploadSubmit}
+        />
+      </div>
       <div className="itp animate__animated animate__fadeIn">
         <ToolBar
           count={filteredData.length}
@@ -447,15 +513,6 @@ const ITP = () => {
         onSubmit={handleDelete}
       />
       <ToastContainer />
-      <button type="button" class="btn btn-primary" onClick={handleOpenUpload}>
-        Upload ITP Documents
-      </button>
-
-      <UploadITPPopUp
-        open={isUploadOpen}
-        onClose={handleCloseUpload}
-        onSubmit={handleUploadSubmit}
-      />
     </div>
   );
 };
