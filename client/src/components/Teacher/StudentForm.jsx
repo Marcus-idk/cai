@@ -87,17 +87,6 @@ function StudentForm({ data, onClose, onSubmit }) {
               <Grid item xs={6}>
                 <TextField
                   fullWidth
-                  label="Resume"
-                  name="Resume"
-                  size="small"
-                  value={input.Resume}
-                  onChange={handleInputChange}
-                  disabled={true}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  fullWidth
                   label="Specialisation"
                   name="specialisation"
                   size="small"
