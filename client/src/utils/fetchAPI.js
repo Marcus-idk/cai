@@ -5,9 +5,6 @@ export async function fetchAPI(URL, body) {
   return await fetch(BACKEND_IP + URL, body);
 }
 
-export function downloadResume(studentID) {
-  window.open(
-    BACKEND_IP + "/uploads/" + studentID + ".pdf",
-    '_blank'
-  );
+export function getResumeLink(studentID) {
+  return BACKEND_IP + "/uploads/" + studentID;
 }

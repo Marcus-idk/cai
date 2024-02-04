@@ -14,7 +14,7 @@ import EditDrawer from "../../components/Teacher/StudentForm";
 import { fetchStudent, updateStudent, addStudent } from "../../api/Student";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadStudentBulkPopUp from "../../components/Teacher/UploadStudentBulkPopUp";
-import { fetchAPI, downloadResume } from "../../utils/fetchAPI";
+import { fetchAPI, getResumeLink } from "../../utils/fetchAPI";
 import "animate.css";
 const ViewAllStudents = () => {
   useAdminAuthCheck(true);
@@ -130,9 +130,22 @@ const ViewAllStudents = () => {
   //   }
   // };
 
+  const urlExists = async (url) => {
+    const res = await fetch(url);
+    return res.ok;
+  }
+
+  const f = async (id) => {
+    const pdf = getResumeLink(id) + ".pdf", docx = getResumeLink(id) + ".docx";
+    if (await urlExists(pdf)) return pdf;
+    else if (await urlExists(docx)) return docx;
+    else return "";
+  }
+
   const mappedData = students.map((item) => ({
     ...item,
     id: item.StudentID, //Required by datagrid
+    resumeLink: f(item.StudentID)
   }));
 
   const columns = [
@@ -169,11 +182,15 @@ const ViewAllStudents = () => {
       field: "resume",
       headerName: "Resume",
       flex: 1,
-      renderCell: (row) => [
+      renderCell: (data) => [
         <GridActionsCellItem
           className="DatagridIcons DatagridIcon_Edit"
           icon={<GetAppIcon />}
-          onClick={() => downloadResume(row.id)}
+          onClick={async () => {
+            const l = await data.row.resumeLink;
+            if (l === "") alert("No resume found");
+            else window.open(l, '_blank');
+          }}
           label="Download"
         ></GridActionsCellItem>,
       ],
