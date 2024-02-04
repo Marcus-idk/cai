@@ -493,7 +493,7 @@ async function insertITP(data) {
     console.error("Error during database operation", err);
     throw err;
   } finally {
-    connection.close();
+    await connection.close();
   }
 }
 

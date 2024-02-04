@@ -44,7 +44,7 @@ async function ensureTagsExist(tags) {
     );
     tagIDs.push(result.recordset[0].TagID);
   }
-  connection.close();
+  await connection.close();
   return tagIDs;
 }
 
