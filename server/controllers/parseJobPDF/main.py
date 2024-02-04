@@ -48,6 +48,34 @@ def generate_job_name(details, outcomes, skills):
     )
     return response.choices[0].message.content
 
+def convertTagsToArray(tags_string):
+    clean_string = tags_string.replace("Tags:", "").strip()
+    if clean_string in ['General Coding', 'No Relevant Context']:
+        return []
+    tags_array = [tag.strip() for tag in clean_string.split(',')]
+    return tags_array
+
+def generate_job_tags(details, outcomes, skills):
+    prompt = (
+        "Your task is to analyze the following job listing and generate relevant tags, focusing strictly on identifying specific technologies, programming languages, or concrete skills mentioned. Avoid making assumptions or inferring skills not explicitly stated. Here are some guidelines for this analysis:\n\n"
+        "1. Only include tags for technologies, programming languages, or skills that are explicitly mentioned in the job description.\n"
+        "2. If the job description is too broad or lacks specific references to technologies or skills (like 'looking for a passionate developer'), tag as 'General Coding' or 'Too General'.\n"
+        "3. Do not infer or assume additional contexts or skills not clearly stated in the job description.\n"
+        "Analyze the following job listing and generate tags accordingly:\n"
+        f"Details: {details}\n"
+        f"Learning Outcomes: {outcomes}\n"
+        f"Skills: {skills}\n"
+        "\nExpected output format: 'Tags: tag1, tag2, tag3'. Separate tags with commas. If the job description is too general or lacks specific references, return 'General Coding' or 'No Relevant Context'."
+    )
+    response = clientOpenAI.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages=[
+            {"role": "user", "content": prompt}
+        ]
+    )
+    res = response.choices[0].message.content
+    return convertTagsToArray(res) 
+
 def parseData(pdf_path):
     with open(pdf_path, 'rb'):
         reader = PyPDF2.PdfReader(pdf_path, strict=False)
@@ -64,7 +92,9 @@ def parseData(pdf_path):
             if job_info is None:
                 break
             job_name = generate_job_name(job_info['JobDetails'], job_info['IntendedLearningOutcomes'], job_info['PreferredSkillSet'])
+            job_tags = generate_job_tags(job_info['JobDetails'], job_info['IntendedLearningOutcomes'], job_info['PreferredSkillSet'])
             job_info['JobName'] = job_name
+            job_info['tags'] = job_tags
             data['job_info'].append(job_info)
             job_suffix += 1
 

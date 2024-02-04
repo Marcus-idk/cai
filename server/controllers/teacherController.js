@@ -402,6 +402,7 @@ async function addITPPDF(req, res) {
                 intendedLearningOutcomes: job.IntendedLearningOutcomes,
                 preferredSkillSet: job.PreferredSkillSet,
                 slots: job.Slots,
+                tags: job.tags,
               })),
             };
             companies.push(companyData);
@@ -440,6 +441,7 @@ async function insertCompanyAndJobs(company) {
         Company: company.companyName,
         CitizenType: "All",
         Description: job.jobDetails,
+        Tags: job.tags
       });
     }
   } catch (error) {

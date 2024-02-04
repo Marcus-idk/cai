@@ -462,13 +462,15 @@ async function insertITP(data) {
 
         INSERT INTO ITP (OpportunityID, JobRole) VALUES (Scope_identity(), '${data.JobRole}');
         COMMIT TRANSACTION [T1]
+        SELECT Scope_identity();
     END TRY
     BEGIN CATCH
         ROLLBACK TRANSACTION [T1]
     END CATCH
     `;
-    console.log(query);
     const result = await connection.query(query);
+    console.log('hello!', data.tags, result);
+
     return { message: "Opportunity inserted successfully" };
   } catch (err) {
     console.error("Error during database operation", err);
