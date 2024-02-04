@@ -452,6 +452,7 @@ async function beginMatching() {
 }
 
 function generateTagInserts(tags) {
+  console.log("wtf", tags);
   let res = "";
   for (const tag of tags) {
     res += `INSERT INTO dbo.tagKey (OpportunityID, tagid) VALUES (@oppid, ${tag});\n`;
@@ -463,7 +464,8 @@ async function insertITP(data) {
   const connection = await dbConfig.connectDB();
 
   try {
-    const tagIDs = ensureTagsExist(data.Tags);
+    console.log(data);
+    const tagIDs = await ensureTagsExist(data.Tags);
     let query = `
     BEGIN TRANSACTION [T1]
     BEGIN TRY
