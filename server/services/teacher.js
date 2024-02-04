@@ -452,7 +452,6 @@ async function beginMatching() {
 }
 
 function generateTagInserts(tags) {
-  console.log("wtf", tags);
   let res = "";
   for (const tag of tags) {
     res += `INSERT INTO dbo.tagKey (OpportunityID, tagid) VALUES (@oppid, ${tag});\n`;
@@ -461,11 +460,10 @@ function generateTagInserts(tags) {
 }
 
 async function insertITP(data) {
+  const tagIDs = await ensureTagsExist(data.Tags);
   const connection = await dbConfig.connectDB();
 
   try {
-    console.log(data);
-    const tagIDs = await ensureTagsExist(data.Tags);
     let query = `
     BEGIN TRANSACTION [T1]
     BEGIN TRY
@@ -484,10 +482,7 @@ async function insertITP(data) {
         ROLLBACK TRANSACTION [T1]
     END CATCH
     `;
-    console.log('hello!', data.Tags, tagIDs, query);
     const result = await connection.query(query);
-    console.log('hello!', result);
-
     return { message: "Opportunity inserted successfully" };
   } catch (err) {
     console.error("Error during database operation", err);
