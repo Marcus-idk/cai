@@ -14,7 +14,7 @@ import PRISMImage from "../assets/images/Buttons/PRISM.jpg";
 import ITPSummaryImage from "../assets/images/Buttons/ITPSummary.jpg";
 import PRISMSummaryImage from "../assets/images/Buttons/PRISMSummary.jpg";
 import useAdminAuthCheck from "../utils/useAdminAuthCheck";
-import 'animate.css';
+import "animate.css";
 
 const images = [
   {

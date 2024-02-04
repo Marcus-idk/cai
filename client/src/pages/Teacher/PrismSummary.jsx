@@ -10,7 +10,7 @@ import { fetchPRISMSummary } from "../../api/PRISM";
 import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import axios from "axios";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
-import 'animate.css';
+import "animate.css";
 const PrismSummary = (props) => {
   useAdminAuthCheck(true);
   const ODD_OPACITY = 0.2;

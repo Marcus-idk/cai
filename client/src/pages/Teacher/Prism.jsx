@@ -15,7 +15,7 @@ import styles from "../../styles/Teacher/Cards1.module.css";
 import Card from "../../components/Teacher/Card1";
 import DeleteDialog from "../../components/UI/DeleteDialog";
 import ToolBar from "../../components/Teacher/Toolbar";
-import 'animate.css';
+import "animate.css";
 import {
   deletePRISM,
   fetchPRISM,

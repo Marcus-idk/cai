@@ -14,7 +14,7 @@ import { fetchStudent, updateStudent, addStudent } from "../../api/Student";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadStudentBulkPopUp from "../../components/Teacher/UploadStudentBulkPopUp";
 import { fetchAPI } from "../../utils/fetchAPI";
-import 'animate.css';
+import "animate.css";
 const ViewAllStudents = () => {
   useAdminAuthCheck(true);
   const ODD_OPACITY = 0.2;

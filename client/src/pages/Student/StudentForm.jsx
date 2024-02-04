@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import styles from "../../styles/Student/StudentForm.module.css";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import { fetchAPI } from "../../utils/fetchAPI";
-import 'animate.css';
+import "animate.css";
 const StudentForm = () => {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");

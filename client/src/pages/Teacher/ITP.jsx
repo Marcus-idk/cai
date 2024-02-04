@@ -21,7 +21,7 @@ import {
   formatDateToDDMMYY,
   formatDateToShortNumeric,
 } from "../../utils/formatTime";
-import 'animate.css';
+import "animate.css";
 import { ToastContainer, toast } from "react-toastify";
 import Error from "../../components/error/Error";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "../styles/UI/Login.module.css";
 import { loginUserApi } from "../api/Login";
 import nyplogo from "../assets/images/nyplogo.png";
-import 'animate.css';
+import "animate.css";
 
 const Login = (props) => {
   const [email, setEmail] = useState("");
