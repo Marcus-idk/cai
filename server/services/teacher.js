@@ -452,7 +452,7 @@ async function beginMatching() {
 }
 
 function generateTagInserts(tags) {
-  const res = "";
+  let res = "";
   for (const tag of tags) {
     res += `INSERT INTO dbo.tagKey (OpportunityID, tagid) VALUES (@oppid, ${tag});\n`;
   }
