@@ -4,6 +4,7 @@ import { alpha, styled } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import GetAppIcon from "@mui/icons-material/GetApp";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
@@ -13,7 +14,7 @@ import EditDrawer from "../../components/Teacher/StudentForm";
 import { fetchStudent, updateStudent, addStudent } from "../../api/Student";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import UploadStudentBulkPopUp from "../../components/Teacher/UploadStudentBulkPopUp";
-import { fetchAPI } from "../../utils/fetchAPI";
+import { fetchAPI, downloadResume } from "../../utils/fetchAPI";
 import "animate.css";
 const ViewAllStudents = () => {
   useAdminAuthCheck(true);
@@ -135,10 +136,10 @@ const ViewAllStudents = () => {
   }));
 
   const columns = [
-    { field: "id", headerName: "Student ID" },
-    { field: "FullName", headerName: "Student Name" },
-    { field: "Specialisation", headerName: "Specialisation" },
-    { field: "GPA", headerName: "GPA" },
+    { field: "id", headerName: "Student ID", flex: 1 },
+    { field: "FullName", headerName: "Student Name" , flex: 1 },
+    { field: "Specialisation", headerName: "Specialisation" , flex: 1 },
+    { field: "GPA", headerName: "GPA" , flex: 1 },
   ];
 
   const rows = mappedData.filter(
@@ -154,13 +155,26 @@ const ViewAllStudents = () => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 100,
+      flex: 1,
       renderCell: (params) => [
         <GridActionsCellItem
           className="DatagridIcons DatagridIcon_Edit"
           icon={<EditIcon />}
           onClick={() => displayEditForm(params.row)}
           label="Edit"
+        ></GridActionsCellItem>,
+      ],
+    },
+    {
+      field: "resume",
+      headerName: "Resume",
+      flex: 1,
+      renderCell: (row) => [
+        <GridActionsCellItem
+          className="DatagridIcons DatagridIcon_Edit"
+          icon={<GetAppIcon />}
+          onClick={() => downloadResume(row.id)}
+          label="Download"
         ></GridActionsCellItem>,
       ],
     },

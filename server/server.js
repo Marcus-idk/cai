@@ -25,6 +25,7 @@ app.use((req, res, next) => {
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/user", studentRoutes);
 app.use("/api/login", loginRoutes);
+app.use("/uploads", express.static(__dirname + '/uploads'));
 //listen to port number
 app.listen(process.env.API_Port, () => {
   console.log("listening on port", process.env.API_Port);
