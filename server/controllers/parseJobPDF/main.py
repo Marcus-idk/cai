@@ -94,7 +94,7 @@ def parseData(pdf_path):
             job_name = generate_job_name(job_info['JobDetails'], job_info['IntendedLearningOutcomes'], job_info['PreferredSkillSet'])
             job_tags = generate_job_tags(job_info['JobDetails'], job_info['IntendedLearningOutcomes'], job_info['PreferredSkillSet'])
             job_info['JobName'] = job_name
-            job_info['tags'] = job_tags
+            job_info['tags'] = job_tags if len(job_tags) > 0 else [job_name]
             data['job_info'].append(job_info)
             job_suffix += 1
 

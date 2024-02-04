@@ -2,6 +2,7 @@ const dbConfig = require("../config/dbConfig");
 const sql = require("mssql");
 const bcrypt = require("bcrypt");
 const { getMatching } = require("../controllers/matchingController");
+const { ensureTagsExist } = require("./student");
 
 async function getAllStudents() {
   const connection = await dbConfig.connectDB();
@@ -450,26 +451,40 @@ async function beginMatching() {
   }
 }
 
+function generateTagInserts(tags) {
+  const res = "";
+  for (const tag of tags) {
+    res += `INSERT INTO dbo.tagKey (OpportunityID, tagid) VALUES (@oppid, ${tag});\n`;
+  }
+  return res;
+}
+
 async function insertITP(data) {
   const connection = await dbConfig.connectDB();
 
   try {
+    const tagIDs = ensureTagsExist(data.Tags);
     let query = `
     BEGIN TRANSACTION [T1]
     BEGIN TRY
+        DECLARE @oppid INT;
         INSERT INTO Opportunities (Deleted, Slots, Description, Company, CitizenType)
         VALUES (0, ${data.Slots}, '${data.Description || ""}', '${data.Company}', '${data.CitizenType}');
+        SET @oppid = SCOPE_IDENTITY();
 
-        INSERT INTO ITP (OpportunityID, JobRole) VALUES (Scope_identity(), '${data.JobRole}');
+        INSERT INTO ITP (OpportunityID, JobRole) VALUES (@oppid, '${data.JobRole}');
+
+        ${generateTagInserts(data.Tags)}        
+
         COMMIT TRANSACTION [T1]
-        SELECT Scope_identity();
     END TRY
     BEGIN CATCH
         ROLLBACK TRANSACTION [T1]
     END CATCH
     `;
+    console.log('hello!', data.Tags, tagIDs, query);
     const result = await connection.query(query);
-    console.log('hello!', data.tags, result);
+    console.log('hello!', result);
 
     return { message: "Opportunity inserted successfully" };
   } catch (err) {
