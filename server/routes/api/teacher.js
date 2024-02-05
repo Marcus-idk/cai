@@ -40,6 +40,8 @@ router.put("/updateITP/:id", teacherController.updateITP);
 router.put("/updateStudent", teacherController.updateStudent);
 //Uses StudentID to update
 
+router.get("/getDistinctTeachers", teacherController.getDistinctTeachers)
+
 router.post("/addITP", teacherController.addITP);
 //Adds ITP
 

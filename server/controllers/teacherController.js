@@ -520,6 +520,17 @@ async function beginMatching(req, res) {
   }
 }
 
+async function getDistinctTeachers(req, res) {
+  try {
+    const teacherNames = await teacherServices.getDistinctTeachers();
+
+    res.status(200).json(teacherNames);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error.message);
+  }
+}
+
 module.exports = {
   getAllITP,
   getAllPRISM,
@@ -541,4 +552,5 @@ module.exports = {
   deleteITP,
   deletePRISM,
   beginMatching,
+  getDistinctTeachers,
 };
