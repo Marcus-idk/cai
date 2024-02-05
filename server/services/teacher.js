@@ -492,6 +492,32 @@ async function insertITP(data) {
   }
 }
 
+async function getDistinctTeachers() {
+  const connection = await dbConfig.connectDB();
+
+  try {
+    let query = `
+    SELECT DISTINCT
+        T.UserID AS TeacherID, 
+        U.FullName AS Name
+    FROM 
+        Teachers T
+    JOIN 
+        Users U ON T.UserID = U.UserID
+    `;
+
+    const result = await connection.query(query);
+    const teacherNames = result.recordset.map(row => row.Name);
+    return teacherNames;
+  } catch (err) {
+    console.error("Error during database operation", err);
+    throw err;
+  } finally {
+    await connection.close();
+  }
+}
+
+
 module.exports = {
   getAllStudents,
   getStudent,
@@ -516,6 +542,7 @@ module.exports = {
   bulkInsertStudentData,
   beginMatching,
   insertITP,
+  getDistinctTeachers,
   // insertIntoOpportunities,
   // insertIntoITP
 };
