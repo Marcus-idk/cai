@@ -54,9 +54,11 @@ async function Assign(Studid, OppID, comments) {
   return result;
 }
 
-async function EditAssign(newID, oldID, opportunityID) {
+async function EditAssign(studentId, oldCompanyID, newCompanyID) {
   try {
     const connection = await dbConfig.connectDB();
+
+    // old code
     let sql = "";
     if (!newID && oldID) {
       sql = `DELETE FROM Assigned WHERE StudentID = '${oldID}'`;

@@ -464,12 +464,12 @@ async function getSlots(req, res) {
 
 async function EditAssign(req, res) {
   try {
-    const opportunityID = req.params.id;
-    const { newID, oldID } = req.body;
+    const studentId = req.params.studentId;
+    const { oldCompanyID, newCompanyID } = req.body;
     const result = await teacherServices.EditAssign(
-      newID,
-      oldID,
-      opportunityID,
+      studentId,
+      oldCompanyID,
+      newCompanyID
     );
     res.status(200).json(result);
   } catch (err) {

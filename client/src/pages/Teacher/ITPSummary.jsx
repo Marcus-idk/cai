@@ -119,21 +119,25 @@ const ITPSummary = () => {
   const handleSearch = (event) => {
     setSearchText(event.target.value);
   };
-  const handleEdit = async (data) => {
+  const handleEdit = async () => {
+    const oldCompanyID = data.Company;
+    const newCompanyID = userInput.Company;
+    const studentID = userInput.StudentID;
+  
     try {
-      let fetchedData = await updateITPSummary(
-        editData.StudentID,
-        data.StudentID,
-        data.id,
+      await updateITPSummary(
+        studentID,
+        oldCompanyID,
+        newCompanyID
       );
     } catch (error) {
-      console.log(data);
+      console.log(userInput);
       console.error(error);
-      setError(error.message);
     } finally {
       handleFetchInfo();
     }
   };
+  
   const handleEditDialog = (data) => {
     setIsEditDialog(true);
     setEditData(data);

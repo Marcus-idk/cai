@@ -7,102 +7,11 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
-/* const EditDrawer = (props) => {
-    const [formToggle, setFormToggle] = useState(false);
-
-    const [userInput, setUserInput] = useState({
-        StudentID: "",
-    });
-
-    useEffect(() => {
-        setFormToggle(false);
-        setUserInput({
-            StudentID: props.data.StudentID || "",
-        });
-    }, [props.data]);
-
-    const handleInputChange = (field, value) => {
-        setUserInput((prevState) => ({
-          ...prevState,
-          [field]: value,
-        }));
-      };
-    const handleCancel = () => {
-        setFormToggle(!formToggle);
-    };
-    const handleFetchInfo = async () => {
-        setIsFetching(true);
-        try {
-            const fetchedData = await fetchITPSummary();
-            let { recordset } = fetchedData;
-            setJobs(recordset);
-        } catch (error) {
-            setError({ message: error.message || "Failed to fetch job listings" });
-        } finally {
-            setIsFetching(false);
-        }
-    };
-    const handleEdit = async (data) => {
-        try {
-            let fetchedData = await update(data);
-          
-        } catch (error) {
-           
-        } finally {
-            handleFetchInfo();
-        }
-    };
-    return (
-        !formToggle && (
-            <div className="overlay">
-                <div className={styles.editDrawer}>
-                    <form>
-                        <h2>
-                            Edit Project <strong>{props.data.OpportunityID }</strong>
-                        </h2>
-                        <div className={styles["input-wrapper"]}>
-                            <label>Company: <strong>{props.data.Company}</strong></label>
-                        </div>
-                        <div className={styles["input-wrapper"]}>
-                            <label>Job Name: <strong>{props.data.JobRole}</strong></label>
-                        </div>
-                        <div className={styles["input-wrapper"]}>
-                            <label>Teacher In Charge: <strong>{props.data.FullName}</strong> </label>
-                        </div>
-                        <div className={styles["input-wrapper"]}>
-                            <label>Student Name: <strong>{props.data.StudName}</strong> </label>
-                        </div>
-                        <div className={styles["input-wrapper"]}>
-                            <label>Admin Number: </label>
-                            <TextField
-                                className={styles.inputBox}
-                                sx={{
-                                    height: 40,
-                                    marginBottom: 2.5,
-                                    input: { height: 40 },
-                                    ".MuiInputBase-input": { padding: "0 14px", height: "40px" },
-                                    ".MuiOutlinedInput-root": { height: "40px" },
-                                }}
-                                value={userInput.StudentID}
-                                onChange={(e) => handleInputChange("StudentID", e.target.value)}
-                            />
-                        </div>
-                        <div className={styles["buttons-wrapper"]}>
-                            <button className={styles.cancelButton} onClick={handleCancel}>
-                                Cancel
-                            </button>
-                            <button className={styles.updateButton} onClick={handleEdit}>
-                                Update
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        )
-    );
-}; */
 function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
+  const [isDisabled, setDisabled] = useState(false);
+
   const [userInput, setUserInput] = useState({
     id: "",
     StudentID: "",
@@ -112,7 +21,7 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
     StudName: "",
     Title: "",
   });
-  const [isDisabled, setDisabled] = useState(false);
+  const [companyNames, setCompanyNames] = useState([]);
   useEffect(() => {
     setUserInput({
       id: data.id || "",
@@ -123,6 +32,19 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
       StudName: data.StudName || "",
       Title: data.Title || "",
     });
+
+    const fetchCompanyNames = async () => {
+      try {
+        const response = await fetch('/getAllITP');
+        // get only names and filter based on slots
+        const names = await response.json();
+        setCompanyNames(names);
+      } catch (error) {
+        console.error('Failed to fetch company names:', error);
+      }
+    };
+  
+    fetchCompanyNames();
   }, [data]);
 
   const handleInputChange = (field, value) => {
@@ -156,9 +78,14 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
           <Grid container spacing={2}>
             {type === "ITP" && (
               <>
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <label>
                     Company: <strong>{userInput.Company}</strong>
+                  </label>
+                </Grid> */}
+                <Grid item xs={6}>
+                  <label>
+                    Job Name: <strong>{userInput.StudName}</strong>
                   </label>
                 </Grid>
                 <Grid item xs={6}>
@@ -172,11 +99,25 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
                   </label>
                 </Grid>
                 <Grid item xs={6}>
-                  <label>
-                    Student Name: <strong>{userInput.StudName}</strong>{" "}
-                  </label>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="company-select-label">Company</InputLabel>
+                    <Select
+                      labelId="company-select-label"
+                      id="company-select"
+                      value={userInput.Company}
+                      label="Company"
+                      onChange={(e) => handleInputChange("Company", e.target.value)}
+                    >
+                      <MenuItem value="">Select/Change Assignment</MenuItem>
+                      {companyNames.map((name, index) => (
+                        <MenuItem key={index} value={name}>
+                          {name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
-                <Grid item xs={6}>
+                {/* <Grid item xs={6}>
                   <TextField
                     fullWidth
                     label="Admin Number"
@@ -187,7 +128,7 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
                       handleInputChange("StudentID", e.target.value)
                     }
                   />
-                </Grid>
+                </Grid> */}
               </>
             )}
             {type === "PRISM" && (

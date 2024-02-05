@@ -58,7 +58,7 @@ router.post(
 );
 //bulk adds Students
 
-router.put("/:id/EditAssign", teacherController.EditAssign);
+router.put("/:studentId/EditAssign", teacherController.EditAssign);
 
 router.delete("/itp/:id", teacherController.deleteITP);
 

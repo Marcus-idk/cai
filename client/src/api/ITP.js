@@ -110,15 +110,15 @@ export async function fetchITPSummary() {
   return resData;
 }
 
-export async function updateITPSummary(oldID, newID, opportunityID) {
-  const response = await fetchAPI(`/api/teacher/${opportunityID}/EditAssign`, {
+export async function updateITPSummary(studentID, oldCompanyID, newCompanyID) {
+  const response = await fetchAPI(`/api/teacher/${studentID}/EditAssign`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      oldID,
-      newID,
+      oldCompanyID,
+      newCompanyID,
     }),
   });
 
