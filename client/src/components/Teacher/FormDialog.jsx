@@ -12,6 +12,15 @@ import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import FormHelperText from "@mui/material/FormHelperText";
+
+// Internship period is an enum corresponding to the 2 possible start/end dates:
+// '1': 6 Mar to 19 Aug
+// '2': 4 Sep to 17 Feb
 
 function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
   const [input, setInput] = useState({
@@ -27,7 +36,9 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
     type: "",
     description: "",
     citizenship: "",
+    period: "", // enum
   });
+  const [err, setErr] = useState(false);
   useEffect(() => {
     const formattedStartDate = data.startDate
       ? new Date(data.startDate).toISOString().split("T")[0]
@@ -35,6 +46,26 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
     const formattedEndDate = data.endDate
       ? new Date(data.endDate).toISOString().split("T")[0]
       : "";
+
+    let period = "";
+    if (data.startDate && data.endDate) {
+      const ds = new Date(data.startDate),
+        de = new Date(data.endDate);
+      if (
+        ds.getMonth() === 2 &&
+        ds.getDate() === 6 &&
+        de.getMonth() === 7 &&
+        de.getDate() === 19
+      )
+        period = "1";
+      if (
+        ds.getMonth() === 8 &&
+        ds.getDate() === 4 &&
+        de.getMonth() === 1 &&
+        de.getDate() === 17
+      )
+        period = "2";
+    }
 
     setInput({
       id: data.id || "",
@@ -48,6 +79,7 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
       slots: data.slots || 0,
       type: data.type || "",
       description: data.description || "",
+      period,
     });
     setInput((prevState) => ({
       ...prevState,
@@ -64,6 +96,11 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
   };
 
   const handleSubmit = async () => {
+    if (!input.teacher) {
+      setErr(true);
+      return;
+    }
+    setErr(false);
     await onSubmit(input);
     onClose();
   };
@@ -108,14 +145,26 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
                   />
                 </Grid>
                 <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Teacher-In-Charge"
-                    name="teacher"
-                    size="small"
-                    value={input.teacher}
-                    onChange={handleInputChange}
-                  />
+                  <FormControl fullWidth size="small" error={err}>
+                    <InputLabel id="teacher-select-label">Teacher</InputLabel>
+                    <Select
+                      labelId="teacher-select-label"
+                      id="teacher-select"
+                      value={input.teacher}
+                      label="Teacher"
+                      name="teacher"
+                      size="small"
+                      onChange={handleInputChange}
+                      required
+                    >
+                      {data.teachers?.map((t) => (
+                        <MenuItem key={t} value={t}>
+                          {t}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {err && <FormHelperText>This is required!</FormHelperText>}
+                  </FormControl>
                 </Grid>
                 <Grid item xs={6}>
                   <TextField
@@ -188,41 +237,43 @@ function FormDialog({ title, type, data, isOpen, onClose, onSubmit }) {
                     onChange={handleInputChange}
                   />
                 </Grid>
-                <Grid item xs={6}>
-                  <TextField
-                    fullWidth
-                    label="Teacher"
-                    name="teacher"
-                    size="small"
-                    value={input.teacher}
-                    onChange={handleInputChange}
-                  />
-                </Grid>
               </>
             )}
-            <Grid item xs={4}>
-              <TextField
-                fullWidth
-                label="StartDate"
-                name="startDate"
-                type="date"
-                size="small"
-                InputLabelProps={{ shrink: true }}
-                value={input.startDate}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                fullWidth
-                label="EndDate"
-                name="endDate"
-                type="date"
-                size="small"
-                InputLabelProps={{ shrink: true }}
-                value={input.endDate}
-                onChange={handleInputChange}
-              />
+            <Grid item xs={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="period-select-label">Period</InputLabel>
+                <Select
+                  labelId="period-select-label"
+                  id="period-select"
+                  value={input.period}
+                  label="Period"
+                  size="small"
+                  onChange={(e) => {
+                    const period = e.target.value;
+                    const year = new Date().getFullYear();
+                    let newStartDate = input.startDate;
+                    let newEndDate = input.endDate;
+                    // months are 0 indexed, days are 1 bigger due to timezone diff
+                    if (period === "1") {
+                      newStartDate = new Date(year, 2, 7);
+                      newEndDate = new Date(year, 7, 20);
+                    }
+                    if (period === "2") {
+                      newStartDate = new Date(year, 8, 5);
+                      newEndDate = new Date(year + 1, 1, 18);
+                    }
+                    setInput((prevState) => ({
+                      ...prevState,
+                      period,
+                      startDate: newStartDate.toISOString().split("T")[0],
+                      endDate: newEndDate.toISOString().split("T")[0],
+                    }));
+                  }}
+                >
+                  <MenuItem value={"1"}>6 Mar to 19 Aug</MenuItem>
+                  <MenuItem value={"2"}>4 Sep to 17 Feb</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
             <Grid item xs={4}>
               <TextField

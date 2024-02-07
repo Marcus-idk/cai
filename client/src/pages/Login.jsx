@@ -10,6 +10,7 @@ const Login = (props) => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [loading, setIsLoading] = useState(false);
   const [showPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -31,24 +32,29 @@ const Login = (props) => {
   const useButton = async () => {
     setEmailError("");
     setPasswordError("");
+    setIsLoading(true);
 
     if ("" === email) {
       setEmailError("Please enter your email");
+      setIsLoading(false);
       return;
     }
 
     if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       setEmailError("Please enter a valid email");
+      setIsLoading(false);
       return;
     }
 
     if ("" === password) {
       setPasswordError("Please enter a password");
+      setIsLoading(false);
       return;
     }
 
     if (password.length <= 7) {
       setPasswordError("The password must be 8 characters or longer");
+      setIsLoading(false);
       return;
     }
 
@@ -57,10 +63,12 @@ const Login = (props) => {
       localStorage.setItem("userRole", data.userRole);
       if ("studentID" in data)
         localStorage.setItem("studentID", data.studentID);
+      setIsLoading(false);
       navigate(0);
     } catch (error) {
       console.error(error.message);
       setEmailError(error.message);
+      setIsLoading(false);
     }
   };
   return (
@@ -105,18 +113,19 @@ const Login = (props) => {
             </div>
             <div className="invalid-feedback">{passwordError}</div>
           </div>
-          <div className="form-check text-start my-3">
+          {/* <div className="form-check text-start my-3">
             <a
               href="#"
               className="link-secondary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
             >
               Forgot Password?
             </a>
-          </div>
+          </div> */}
           <button
             className="btn btn-primary w-100 py-2"
             type="button"
             onClick={useButton}
+            disabled={loading}
           >
             Sign in
           </button>

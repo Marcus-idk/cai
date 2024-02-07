@@ -6,12 +6,17 @@ import TextField from "@mui/material/TextField";
 import styles from "../../styles/Teacher/ITP-Prism.module.css";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
-import { fetchITPSummary, updateITPSummary } from "../../api/ITP";
+import {
+  fetchITPSummary,
+  updateITPSummary,
+  fetchAvaliableITPs,
+} from "../../api/ITP";
 import EditDrawer from "../../components/Teacher/SummaryEditDrawer";
 import Edit from "@mui/icons-material/Edit";
 import useAdminAuthCheck from "../../utils/useAdminAuthCheck";
 import Button from "@mui/material/Button";
 import { fetchAPI } from "../../utils/fetchAPI";
+import CustomNoRowsOverlay from "../../components/UI/CustomNoRowsOverlay";
 import "animate.css";
 const ITPSummary = () => {
   useAdminAuthCheck(true);
@@ -24,7 +29,9 @@ const ITPSummary = () => {
   const [jobListings, setJobListings] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState("");
+  const [okMsg, setOkMsg] = useState("");
   const [isEditDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [avaliableITPs, setAvaliableITPs] = useState([]);
   const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     [`& .${gridClasses.row}.even`]: {
       backgroundColor: theme.palette.grey[300],
@@ -63,6 +70,7 @@ const ITPSummary = () => {
       setError("");
       try {
         const fetchedData = await fetchITPSummary();
+        setAvaliableITPs(await fetchAvaliableITPs());
         console.log("fetchdata");
         console.log(fetchedData);
         let { recordset } = fetchedData;
@@ -107,10 +115,10 @@ const ITPSummary = () => {
 
   const rows = mappedData;
 
-  const displayEditForm = (data) => {
-    setEditData(data);
-    setEditDrawerOpen(true);
-  };
+  // const displayEditForm = (data) => {
+  //   setEditData(data);
+  //   setEditDrawerOpen(true);
+  // };
 
   const closeEditDrawer = () => {
     setEditDrawerOpen(false);
@@ -121,22 +129,24 @@ const ITPSummary = () => {
   };
   const handleEdit = async (data) => {
     try {
+      setIsEditDialog(false);
+      setIsFetching(true);
       let fetchedData = await updateITPSummary(
-        editData.StudentID,
         data.StudentID,
-        data.id,
+        editData.OpportunityID,
+        data.newITP,
       );
     } catch (error) {
       console.log(data);
       console.error(error);
       setError(error.message);
     } finally {
-      handleFetchInfo();
+      await handleFetchInfo();
     }
   };
   const handleEditDialog = (data) => {
     setIsEditDialog(true);
-    setEditData(data);
+    setEditData({ ...data, avaliableITPs });
   };
   const handleFetchInfo = async () => {
     setIsFetching(true);
@@ -171,6 +181,9 @@ const ITPSummary = () => {
     );
     if (!secondConfirm) return;
     try {
+      setIsFetching(true);
+      setOkMsg("");
+      setError("");
       const response = await fetchAPI("/api/teacher/match", {
         method: "POST",
         headers: {
@@ -180,22 +193,47 @@ const ITPSummary = () => {
 
       if (response.ok) {
         console.log("Matching process initiated successfully");
+        setOkMsg("Matching successful");
       } else {
         console.error("Failed to start matching process");
+        setError("Matching failed");
       }
     } catch (error) {
       console.error("Error during fetching:", error);
+      setError(error.toString());
+    } finally {
+      await handleFetchInfo();
     }
   };
 
   return (
     <div className="container animate__animated animate__fadeIn">
-      {error && (
+      {okMsg !== "" && (
         <div
-          className="alert alert-danger alert-dismissible fade show"
+          class="alert alert-success alert-dismissible fade show"
           role="alert"
         >
-          {error}
+          <strong>Success!</strong> {okMsg}
+          <button
+            type="button"
+            class="btn-close"
+            onClick={() => setOkMsg("")}
+            aria-label="Close"
+          ></button>
+        </div>
+      )}
+      {error !== "" && (
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <strong>Error!</strong> {error}
+          <button
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            onClick={() => setError("")}
+          ></button>
         </div>
       )}
       <div className={styles["maindiv"]}>
@@ -214,8 +252,16 @@ const ITPSummary = () => {
               value={searchText}
               onChange={handleSearch}
             />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleBeginMatching}
+              style={{ float: "right" }}
+              disabled={isFetching}
+            >
+              Begin Matching Process
+            </Button>
           </div>
-          <div></div>
         </div>
         <StripedDataGrid
           className={styles["table"]}
@@ -231,6 +277,10 @@ const ITPSummary = () => {
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
           }
+          loading={isFetching}
+          autoHeight
+          slots={{ noRowsOverlay: CustomNoRowsOverlay }}
+          sx={{ "--DataGrid-overlayHeight": "300px" }}
         />
         {isEditDrawerOpen && (
           <EditDrawer data={editData} onClose={closeEditDrawer} />
@@ -245,17 +295,6 @@ const ITPSummary = () => {
         onFetch={handleFetchInfo}
         onSubmit={handleEdit}
       />
-
-      <div className="container">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleBeginMatching}
-          style={{ marginTop: "20px" }}
-        >
-          Begin Matching Process
-        </Button>
-      </div>
     </div>
   );
 };

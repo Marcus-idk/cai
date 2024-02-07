@@ -13,6 +13,8 @@ router.get("/prism/", teacherController.getAllPRISM);
 router.get("/AllITPSummary", teacherController.AllITPSummary);
 //gets all for summary table
 
+router.get("/AvaliableITPs", teacherController.AvaliableITPs);
+
 router.get("/AllPRISMSummary", teacherController.AllPRISMSummary);
 //gets all for summary table
 
@@ -40,7 +42,7 @@ router.put("/updateITP/:id", teacherController.updateITP);
 router.put("/updateStudent", teacherController.updateStudent);
 //Uses StudentID to update
 
-router.get("/getDistinctTeachers", teacherController.getDistinctTeachers)
+router.get("/getDistinctTeachers", teacherController.getDistinctTeachers);
 
 router.post("/addITP", teacherController.addITP);
 //Adds ITP

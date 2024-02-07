@@ -54,16 +54,17 @@ async function Assign(Studid, OppID, comments) {
   return result;
 }
 
-async function EditAssign(newID, oldID, opportunityID) {
+async function EditAssign(newID, oldID, studentID) {
+  if (newID === "0") newID = undefined;
   try {
     const connection = await dbConfig.connectDB();
     let sql = "";
     if (!newID && oldID) {
-      sql = `DELETE FROM Assigned WHERE StudentID = '${oldID}'`;
+      sql = `DELETE FROM Assigned WHERE StudentID = '${studentID}'`;
     } else if (newID && !oldID) {
-      sql = `INSERT INTO Assigned (OpportunityID, StudentID) VALUES ('${opportunityID}','${newID}')`;
+      sql = `INSERT INTO Assigned (OpportunityID, StudentID) VALUES ('${newID}','${studentID}')`;
     } else if (newID && oldID) {
-      sql = `UPDATE Assigned SET StudentID = '${newID}' WHERE StudentID = '${oldID}'`;
+      sql = `UPDATE Assigned SET OpportunityID = '${newID}' WHERE StudentID = '${studentID}'`;
     }
 
     let result = null;
@@ -154,6 +155,14 @@ async function AllITPSummary() {
   return result;
 }
 
+async function AvaliableITPs() {
+  const connection = await dbConfig.connectDB();
+  // TODO: how to check for avaliability?
+  const result = await connection.query("EXEC Getallitp");
+  await connection.close();
+  return result.recordset;
+}
+
 async function AddITP(
   company,
   role,
@@ -163,6 +172,7 @@ async function AddITP(
   specialisation,
   startDate,
   endDate,
+  citizenship,
 ) {
   let connection;
 
@@ -170,14 +180,16 @@ async function AddITP(
     const connection = await dbConfig.connectDB();
     const request = new sql.Request(connection);
 
-    request.input("StartDate", sql.DateTime, new Date(startDate));
-    request.input("EndDate", sql.DateTime, new Date(endDate));
+    request.input("StartDate", sql.DateTime, new Date(startDate || 0));
+    request.input("EndDate", sql.DateTime, new Date(endDate || 0));
     request.input("Slots", sql.Int, slots);
     request.input("Description", sql.NVarChar(sql.MAX), description);
     request.input("Specialisation", sql.VarChar(3), specialisation);
-    request.input("Teacher", sql.NVarChar(256), teacher);
+    request.input("TeacherName", sql.NVarChar(256), teacher);
     request.input("Company", sql.NVarChar(256), company);
     request.input("JobRole", sql.NVarChar(128), role);
+    request.input("CitizenType", sql.NVarChar(256), citizenship);
+    console.log(request);
 
     const result = await request.execute("AddITP");
     return result;
@@ -270,8 +282,8 @@ async function UpdateITP(
     const request = new sql.Request(connection);
 
     request.input("OpportunityID", sql.Int, id);
-    request.input("StartDate", sql.DateTime, new Date(startDate));
-    request.input("EndDate", sql.DateTime, new Date(endDate));
+    request.input("StartDate", sql.DateTime, new Date(startDate || 0));
+    request.input("EndDate", sql.DateTime, new Date(endDate || 0));
     request.input("Slots", sql.Int, slots);
     request.input("Description", sql.NVarChar(sql.MAX), description);
     request.input("Specialisation", sql.VarChar(3), specialisation);
@@ -507,7 +519,7 @@ async function getDistinctTeachers() {
     `;
 
     const result = await connection.query(query);
-    const teacherNames = result.recordset.map(row => row.Name);
+    const teacherNames = result.recordset.map((row) => row.Name);
     return teacherNames;
   } catch (err) {
     console.error("Error during database operation", err);
@@ -516,7 +528,6 @@ async function getDistinctTeachers() {
     await connection.close();
   }
 }
-
 
 module.exports = {
   getAllStudents,
@@ -543,6 +554,7 @@ module.exports = {
   beginMatching,
   insertITP,
   getDistinctTeachers,
+  AvaliableITPs,
   // insertIntoOpportunities,
   // insertIntoITP
 };

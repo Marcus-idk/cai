@@ -201,18 +201,7 @@ async function updateITP(req, res) {
       citizenship,
     } = req.body;
 
-    if (
-      !id ||
-      !company ||
-      !role ||
-      !description ||
-      !slots ||
-      !teacher ||
-      !specialisation ||
-      !startDate ||
-      !endDate ||
-      !citizenship
-    ) {
+    if (!id) {
       return res.status(400).json({ error: "Missing required fields" });
     }
     const result = await teacherServices.UpdateITP(
@@ -292,20 +281,8 @@ async function addITP(req, res) {
       specialisation,
       startDate,
       endDate,
+      citizenship,
     } = req.body;
-
-    if (
-      !company ||
-      !role ||
-      !description ||
-      !slots ||
-      !teacher ||
-      !specialisation ||
-      !startDate ||
-      !endDate
-    ) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
 
     const result = await teacherServices.AddITP(
       company,
@@ -316,6 +293,7 @@ async function addITP(req, res) {
       specialisation,
       startDate,
       endDate,
+      citizenship,
     );
 
     res.status(200).json(result);
@@ -441,7 +419,7 @@ async function insertCompanyAndJobs(company) {
         Company: company.companyName,
         CitizenType: "All",
         Description: job.jobDetails,
-        Tags: job.tags
+        Tags: job.tags,
       });
     }
   } catch (error) {
@@ -464,13 +442,9 @@ async function getSlots(req, res) {
 
 async function EditAssign(req, res) {
   try {
-    const opportunityID = req.params.id;
+    const studentID = req.params.id;
     const { newID, oldID } = req.body;
-    const result = await teacherServices.EditAssign(
-      newID,
-      oldID,
-      opportunityID,
-    );
+    const result = await teacherServices.EditAssign(newID, oldID, studentID);
     res.status(200).json(result);
   } catch (err) {
     console.log("Error", err);
@@ -531,6 +505,16 @@ async function getDistinctTeachers(req, res) {
   }
 }
 
+async function AvaliableITPs(req, res) {
+  try {
+    const result = await teacherServices.AvaliableITPs();
+    res.status(200).json(result);
+  } catch (err) {
+    console.log("Error", err);
+    res.status(500).send(err.message);
+  }
+}
+
 module.exports = {
   getAllITP,
   getAllPRISM,
@@ -553,4 +537,5 @@ module.exports = {
   deletePRISM,
   beginMatching,
   getDistinctTeachers,
+  AvaliableITPs,
 };

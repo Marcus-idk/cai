@@ -7,6 +7,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 /* const EditDrawer = (props) => {
     const [formToggle, setFormToggle] = useState(false);
@@ -111,9 +115,11 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
     FullName: "",
     StudName: "",
     Title: "",
+    newITP: "",
   });
   const [isDisabled, setDisabled] = useState(false);
   useEffect(() => {
+    console.log(data);
     setUserInput({
       id: data.id || "",
       StudentID: data.StudentID || "",
@@ -122,6 +128,7 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
       FullName: data.FullName || "",
       StudName: data.StudName || "",
       Title: data.Title || "",
+      newITP: "",
     });
   }, [data]);
 
@@ -137,18 +144,15 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
     onClose();
     setDisabled(false);
   };
+  const formatITP = (itp) => {
+    return `O${itp.opportunityID} - ${itp.role} at ${itp.company}`;
+  };
   return (
     <>
       <Dialog open={isOpen}>
         <DialogTitle>
           <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              {userInput.id ? (
-                <>Edit Job Listing - {userInput.id}</>
-              ) : (
-                <>Add Job Listing</>
-              )}
-            </Grid>
+            <Grid item>Edit Matching for {userInput.StudentID}</Grid>
           </Grid>
         </DialogTitle>
         <Divider />
@@ -156,6 +160,16 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
           <Grid container spacing={2}>
             {type === "ITP" && (
               <>
+                <Grid item xs={6}>
+                  <label>
+                    Student Name: <strong>{userInput.StudName}</strong>{" "}
+                  </label>
+                </Grid>
+                <Grid item xs={6}>
+                  <label>
+                    Student ID: <strong>{userInput.StudentID}</strong>{" "}
+                  </label>
+                </Grid>
                 <Grid item xs={6}>
                   <label>
                     Company: <strong>{userInput.Company}</strong>
@@ -171,13 +185,30 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
                     Teacher In Charge: <strong>{userInput.FullName}</strong>{" "}
                   </label>
                 </Grid>
-                <Grid item xs={6}>
-                  <label>
-                    Student Name: <strong>{userInput.StudName}</strong>{" "}
-                  </label>
-                </Grid>
-                <Grid item xs={6}>
-                  <TextField
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="itp-select-label">New ITP</InputLabel>
+                    <Select
+                      labelId="itp-select-label"
+                      id="itp-select"
+                      value={userInput.newITP}
+                      label="New ITP"
+                      name="newITP"
+                      onChange={(e) => {
+                        handleInputChange("newITP", e.target.value);
+                      }}
+                    >
+                      <MenuItem key={0} value={"0"}>
+                        Remove matching
+                      </MenuItem>
+                      {data.avaliableITPs?.map((i) => (
+                        <MenuItem key={i.opportunityID} value={i.opportunityID}>
+                          {formatITP(i)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  {/* <TextField
                     fullWidth
                     label="Admin Number"
                     name="Admin Number"
@@ -186,11 +217,11 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
                     onChange={(e) =>
                       handleInputChange("StudentID", e.target.value)
                     }
-                  />
+                  /> */}
                 </Grid>
               </>
             )}
-            {type === "PRISM" && (
+            {/* {type === "PRISM" && (
               <>
                 <Grid item xs={4}>
                   <label>
@@ -218,7 +249,7 @@ function EditDrawer({ title, type, data, isOpen, onClose, onSubmit }) {
                   />
                 </Grid>
               </>
-            )}
+            )} */}
             <Grid item xs={6}></Grid>
             <Grid item xs={3} container justifyContent="flex-end">
               <Button fullWidth variant="outlined" onClick={onClose}>

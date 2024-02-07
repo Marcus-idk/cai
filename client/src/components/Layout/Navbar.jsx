@@ -61,7 +61,7 @@ const Navbar = () => {
           {userRole === "regular" && (
             <>
               <NavbarLink linkPath="/studentform" currPath={path} text="Form" />
-              <NavbarLink linkPath="#" currPath={path} text="About" />
+              {/* <NavbarLink linkPath="#" currPath={path} text="About" /> */}
             </>
           )}
           {userRole === "admin" && (

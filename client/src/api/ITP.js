@@ -11,6 +11,17 @@ export async function fetchITP() {
   return resData;
 }
 
+export async function fetchTeachers() {
+  const response = await fetchAPI("/api/teacher/getDistinctTeachers");
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const resData = await response.json();
+
+  return resData;
+}
+
 export async function postITP({
   company,
   role,
@@ -20,6 +31,7 @@ export async function postITP({
   endDate,
   slots,
   description,
+  citizenship,
 }) {
   const response = await fetchAPI("/api/teacher/addITP", {
     method: "POST",
@@ -35,6 +47,7 @@ export async function postITP({
       endDate,
       slots,
       description,
+      citizenship,
     }),
   });
 
@@ -110,8 +123,19 @@ export async function fetchITPSummary() {
   return resData;
 }
 
-export async function updateITPSummary(oldID, newID, opportunityID) {
-  const response = await fetchAPI(`/api/teacher/${opportunityID}/EditAssign`, {
+export async function fetchAvaliableITPs() {
+  const response = await fetchAPI("/api/teacher/AvaliableITPs");
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const resData = await response.json();
+
+  return resData;
+}
+
+export async function updateITPSummary(studentID, oldID, newID) {
+  const response = await fetchAPI(`/api/teacher/${studentID}/EditAssign`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

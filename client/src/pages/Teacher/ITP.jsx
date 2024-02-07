@@ -14,7 +14,13 @@ import styles from "../../styles/Teacher/Cards1.module.css";
 import Card from "../../components/Teacher/Card1";
 import DeleteDialog from "../../components/UI/DeleteDialog";
 import ToolBar from "../../components/Teacher/Toolbar";
-import { deleteITP, fetchITP, postITP, updateITP } from "../../api/ITP";
+import {
+  deleteITP,
+  fetchITP,
+  fetchTeachers,
+  postITP,
+  updateITP,
+} from "../../api/ITP";
 import { CircularProgress } from "@mui/material";
 import FormDialog from "../../components/Teacher/FormDialog";
 import {
@@ -53,20 +59,23 @@ const ITP = () => {
     calculateDynamicHeight(),
   );
 
-    const fetchData = async () => {
-      setIsFetching(true);
-      setError();
-      try {
-        const fetchedData = await fetchITP();
-        let { recordset } = fetchedData;
-        console.log(recordset);
-        setJobs(recordset);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setIsFetching(false);
-      }
-    };
+  const [teachers, setTeachers] = useState([]);
+
+  const fetchData = async () => {
+    setIsFetching(true);
+    setError();
+    try {
+      const fetchedData = await fetchITP();
+      setTeachers(await fetchTeachers());
+      let { recordset } = fetchedData;
+      console.log(recordset);
+      setJobs(recordset);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const handleOpenUpload = () => {
     setIsUploadOpen(true);
@@ -246,6 +255,8 @@ const ITP = () => {
 
   const handleAdd = async (data) => {
     try {
+      setIsAddDialog(false);
+      setIsFetching(true);
       let fetchedData = await postITP(data);
       toast.success(`Successfully added job`);
     } catch (error) {
@@ -257,7 +268,7 @@ const ITP = () => {
 
   const handleEditDialog = (data) => {
     setIsEditDialog(true);
-    setEditData(data);
+    setEditData({ ...data, teachers });
   };
 
   const handleEdit = async (data) => {
@@ -265,7 +276,6 @@ const ITP = () => {
       setIsEditDialog(false);
       setIsFetching(true);
       await updateITP(data);
-      setIsFetching(false);
       toast.success(`Successfully edited job`);
     } catch (error) {
       toast.error(error.message);
@@ -312,7 +322,7 @@ const ITP = () => {
   }, []);
 
   return (
-    <div>
+    <div class="container">
       <div className="my-3 text-center container">
         {successMsg !== "" && (
           <div
@@ -342,19 +352,23 @@ const ITP = () => {
             ></button>
           </div>
         )}
-        <button type="button" class="btn btn-primary" onClick={handleOpenUpload}
-                disabled={loading}>
-                {loading ? (
-                  <>
-                    <span
-                      class="spinner-border spinner-border-sm mx-1"
-                      aria-hidden="true"
-                    ></span>
-                    <span role="status">Loading...</span>
-                  </>
-                ) : (
-                  "Upload ITP Documents"
-                )}
+        <button
+          type="button"
+          class="btn btn-primary"
+          onClick={handleOpenUpload}
+          disabled={loading}
+        >
+          {loading ? (
+            <>
+              <span
+                class="spinner-border spinner-border-sm mx-1"
+                aria-hidden="true"
+              ></span>
+              <span role="status">Loading...</span>
+            </>
+          ) : (
+            "Upload ITP Documents"
+          )}
         </button>
         <UploadITPPopUp
           open={isUploadOpen}
@@ -491,7 +505,7 @@ const ITP = () => {
       <FormDialog
         title="Add"
         type="ITP"
-        data={isAddDialog}
+        data={{ teachers }}
         isOpen={isAddDialog}
         onClose={() => setIsAddDialog(false)}
         onFetch={handleFetchJobs}

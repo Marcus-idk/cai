@@ -19,7 +19,8 @@
 }
 
 .left h2 {
-  font-size: 20px;
+  font-size: 18px;
+  margin-bottom: 0;
   font-weight: normal;
   color: var(--white);
   margin-right: 20px;
